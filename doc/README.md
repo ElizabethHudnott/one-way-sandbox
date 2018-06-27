@@ -14,6 +14,7 @@
 - [ ] removeEventListener
 - [x] append
 - [ ] filterUpdate
+- [ ] increment
 - [ ] insertBefore
 - [ ] insertAfter
 - [ ] mapUpdate
@@ -103,8 +104,7 @@ These operate on a collection of matches.
 
 # Possible Targets
 - [x] Array of child indices
-- [x] ID
-- [ ] Any CSS selector
+- [x] CSS selector
 
 # Attributes
 - operation
@@ -115,8 +115,9 @@ These operate on a collection of matches.
 
 # Messages Returned
 - [ ] error
-- [x] loaded
+- [x] load
 - [ ] return
+- [x] unload
 
 # Error Types
 - TargetNotFound
