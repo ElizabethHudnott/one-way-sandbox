@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>IFrame Modifications Test</title>
+	<script src="../src/page-modifier.js"></script>
+	<script>
+		function testInnerHTML() {
+			Unsandbox.send('inner', {
+				selector: [1, 0],
+				operation: 'innerHTML',
+				value: '<h1>Hello World!</h1>',
+			});
+		}
+
+		Unsandbox.addIFrame('inner', testInnerHTML);
+	</script>
+</head>
+<body>
+	<iframe id="inner" src="iframe.html" sandbox="allow-scripts" style="width: 90vw; height: 90vh;"></iframe>
+</body>
+</html>
