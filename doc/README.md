@@ -36,7 +36,7 @@
 
 ## CSS
 ### Element Classes
-- [ ] addClass
+- [x] addClass
 - [ ] removeClass
 - [ ] replaceClass
 - [ ] toggleClass
@@ -126,6 +126,8 @@ These operate on a collection of matches.
 
 # URL Parameters
 - `allownavigation`: Fires ` navigation` and `load` events when clicking on a link to another page within the same site instead of `unload` events. The same-site protection can be circumvented by an attacker if they're able to inject code into the child window.
+	- [x] Works with hyperlinks
+	- [ ] Works with form submission
 
 # No Demo Supplied Yet
 - srcdoc

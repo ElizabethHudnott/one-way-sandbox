@@ -13,6 +13,14 @@ function addLogs() {
 
 Unsandbox.addElement('inner', addLogs);
 
+function sendAddClass() {
+	Unsandbox.send('inner', {
+		operation: 'addClass',
+		selector: 'body',
+		name: 'lemon',
+	});
+}
+
 function sendAppend() {
 	Unsandbox.send('inner', {
 		operation: 'append',
@@ -58,6 +66,14 @@ function sendRemoveAttribute() {
 	});
 }
 
+function sendRemoveClass() {
+	Unsandbox.send('inner', {
+		operation: 'removeClass',
+		selector: 'body',
+		name: 'lemon',
+	});
+}
+
 function sendSet() {
 	Unsandbox.send('inner', {
 		operation: 'set',
@@ -72,5 +88,13 @@ function sendSetAttribute() {
 		selector: '#textbox',
 		name: 'value',
 		value: 'Parent document wrote this'
+	});
+}
+
+function sendToggleClass() {
+	Unsandbox.send('inner', {
+		operation: 'toggleClass',
+		selector: 'body',
+		name: 'lemon',
 	});
 }

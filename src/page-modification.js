@@ -9,6 +9,27 @@
 			window.Unsandbox = {};
 		}
 
+		function findObject(name, begin) {
+			let obj = begin;
+			const names = [];
+			const accessorRE = /(?:(?:^|\.)([a-z_$][\w$]*))|(?:\[([^\]]*)])/giy;
+			if (name !== undefined) {
+				let match;
+				while ((match = accessorRE.exec(name)) !== null) {
+					if (match[1] !== undefined) {
+						names.push(match[1]);
+					} else {
+						names.push(match[2]);
+					}
+				}
+				for (let i = 0; i < names.length - 1; i++) {
+					obj = obj[names[i]];
+				}
+				const lastName = names[names.length - 1];
+				return [obj, lastName];
+			}
+		}
+
 		/*	Converts a string into a live list of nodes.
 			@param {string} html The HTML to convert into DOM objects.
 			@return {NodeList}
@@ -81,30 +102,13 @@
 				elements = [element];
 			}
 
-			const names = [];
-			const accessorRE = /(?:(?:^|\.)([a-z_$][\w$]*))|(?:\[([^\]]*)])/giy;
-			let lastName;
-			if (name !== undefined) {
-				let match;
-				while ((match = accessorRE.exec(name)) !== null) {
-					if (match[1] !== undefined) {
-						names.push(match[1]);
-					} else {
-						names.push(match[2]);
-					}
-				}
-				lastName = names[names.length - 1];
-			}
-
-			let charIndex;
+			let charIndex, obj, jsPropertyName;
 
 			for (const element of elements) {
-				let obj = element;
-				for (let i = 0; i < names.length - 1; i++) {
-					obj = obj[names[i]];
-				}
-
 				switch (operation) {
+				case 'addClass':
+					element.classList.add(name);
+					break;
 				case 'append':
 					let newNodes = Unsandbox.htmlToNodes(value);
 					while (newNodes.length > 0) {
@@ -123,8 +127,12 @@
 				case 'removeAttribute':
 					element.removeAttribute(name);
 					break;
+				case 'removeClass':
+					element.classList.remove(name);
+					break;
 				case 'set':
-					obj[lastName] = value;
+					[obj, jsPropertyName] = findObject(name, element);
+					obj[jsPropertyName] = value;
 					break;
 				case 'setAttribute':
 					element.setAttribute(name, value);
@@ -138,6 +146,9 @@
 						document.writeln(value.slice(0, charIndex) + '<script src="' + myURL + '"></script></body></html>');
 					}
 					document.close();
+					break;
+				case 'toggleClass':
+					element.classList.toggle(name);
 					break;
 				default:
 					console.error('Document update: unknown operation ' + operation);

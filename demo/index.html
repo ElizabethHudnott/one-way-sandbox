@@ -11,14 +11,17 @@
 	<iframe id="inner" src="iframe.html" sandbox="allow-scripts"></iframe>
 	<ul id="commands">
 		<li>
+			<button type="button" onclick="sendAddClass()">addClass</button>
 			<button type="button" onclick="sendAppend()">append</button>
 			<button type="button" onclick="sendInnerHTML()">innerHTML</button>
 			<button type="button" onclick="sendOuterHTML()">outerHTML</button>
 			<button type="button" onclick="sendReload()">reload</button>
 			<button type="button" onclick="sendRemove()">remove</button>
 			<button type="button" onclick="sendRemoveAttribute()">removeAttribute</button>
+			<button type="button" onclick="sendRemoveClass()">removeClass</button>
 			<button type="button" onclick="sendSet()">set</button>
 			<button type="button" onclick="sendSetAttribute()">setAttribute</button>
+			<button type="button" onclick="sendToggleClass()">toggleClass</button>
 		</li>
 	</ul>
 </body>
