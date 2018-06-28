@@ -1,5 +1,8 @@
 'use strict';
-let Unsandbox;
+if (!('Unsandbox' in window)) {
+	window.Unsandbox = {};
+}
+
 {
 	let iFrameIDs = new Set();
 	let loadHandlers = new Map();
@@ -11,26 +14,24 @@ let Unsandbox;
 	}
 	CustomError.prototype = new Error();
 
-	Unsandbox = {
-		addIFrame: function (id, loadHandler) {
-			iFrameIDs.add(id);
-			if (loadHandler) {
-				loadHandlers.set(id, loadHandler);
-			}
-		},
+	Unsandbox.addIFrame = function (id, loadHandler) {
+		iFrameIDs.add(id);
+		if (loadHandler) {
+			loadHandlers.set(id, loadHandler);
+		}
+	}
 
-		removeIFrame: function (id) {
-			iFrameIDs.delete(id);
-			loadHandlers.delete(id);
-		},
+	Unsandbox.removeIFrame = function (id) {
+		iFrameIDs.delete(id);
+		loadHandlers.delete(id);
+	},
 
-		send: function (id, command) {
-			if (iFrameIDs.has(id)) {
-				const destinationWindow = document.getElementById(id).contentWindow;
-				destinationWindow.postMessage(command, '*');
-			} else {
-				throw new CustomError('UnknownWindow', id);
-			}
+	Unsandbox.send = function (id, command) {
+		if (iFrameIDs.has(id)) {
+			const destinationWindow = document.getElementById(id).contentWindow;
+			destinationWindow.postMessage(command, '*');
+		} else {
+			throw new CustomError('UnknownWindow', id);
 		}
 	}
 
