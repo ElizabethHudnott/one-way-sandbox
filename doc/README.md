@@ -107,15 +107,16 @@ These operate on a collection of matches.
 - [x] CSS selector
 
 # Attributes
-- operation
-- selector
-- name (list of dot separated or square bracketed JS property names (without quotes))
-- value/args
-- func
+- [x] operation
+- [x] selector
+- [x] name (list of dot separated or square bracketed JS property names (without quotes))
+- [x] value/args
+- [ ] func
 
-# Messages Returned
+# Events
 - [ ] error
 - [x] load
+- [x] navigation
 - [ ] return
 - [x] unload
 
@@ -123,5 +124,8 @@ These operate on a collection of matches.
 - TargetNotFound
 - UnknownOperation
 
-# Not Demo Supplied Yet
+# URL Parameters
+- `allownavigation`: Fires ` navigation` and `load` events when clicking on a link to another page within the same site instead of `unload` events. The same-site protection can be circumvented by an attacker if they're able to inject code into the child window.
+
+# No Demo Supplied Yet
 - srcdoc

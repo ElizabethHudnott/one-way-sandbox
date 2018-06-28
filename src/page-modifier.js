@@ -1,9 +1,13 @@
 'use strict';
-if (!('Unsandbox' in window)) {
-	window.Unsandbox = {};
-}
-
 {
+	if (!('Unsandbox' in window)) {
+		window.Unsandbox = {};
+	}
+
+	const myURL = document.currentScript.src;
+	const urlParams = new URLSearchParams(myURL.indexOf('?') !== -1? myURL.slice(myURL.indexOf('?')) : '');
+	const paramAllowNavigation = /^(true|1)?$/i.test(urlParams.get('allownavigation'));
+
 	let loadListeners = new Map();
 	let listeners = new Map();
 
@@ -75,11 +79,15 @@ if (!('Unsandbox' in window)) {
 		if (typeof(data) !== 'object') {
 			return;
 		}
-		const eventType = data.eventType;
+		let eventType = data.eventType;
 		if (!/^(load|navigation|unload)$/.test(eventType)) {
 			return;
 		}
 		event.stopImmediatePropagation();
+
+		if (eventType === 'navigation' && !paramAllowNavigation) {
+			eventType = 'unload';
+		}
 
 		const source = event.source;
 
