@@ -3,20 +3,23 @@
 <head>
 	<meta charset="UTF-8">
 	<title>IFrame Modifications Test</title>
+	<link rel="stylesheet" href="index.css"/>
 	<script src="../src/page-modifier.js"></script>
-	<script>
-		function testInnerHTML() {
-			Unsandbox.send('inner', {
-				selector: [1, 0],
-				operation: 'innerHTML',
-				value: '<h1>Hello World!</h1>',
-			});
-		}
-
-		Unsandbox.addIFrame('inner', testInnerHTML);
-	</script>
+	<script src="index.js"></script>
 </head>
 <body>
-	<iframe id="inner" src="iframe.html" style="width: 90vw; height: 90vh;"></iframe>
+	<iframe id="inner" src="iframe.html"></iframe>
+	<ul id="commands">
+		<li>
+			<button type="button" onclick="sendAppend()">append</button>
+			<button type="button" onclick="sendInnerHTML()">innerHTML</button>
+			<button type="button" onclick="sendOuterHTML()">outerHTML</button>
+			<button type="button" onclick="sendReload()">reload</button>
+			<button type="button" onclick="sendRemove()">remove</button>
+			<button type="button" onclick="sendRemoveAttribute()">removeAttribute</button>
+			<button type="button" onclick="sendSet()">set</button>
+			<button type="button" onclick="sendSetAttribute()">setAttribute</button>
+		</li>
+	</ul>
 </body>
 </html>

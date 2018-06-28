@@ -2,10 +2,32 @@
 <html>
 <head>
 	<meta charset="UTF-8">
+	<link rel="stylesheet" href="iframe.css"/>
+	<script>
+		window.x = 0;
+	</script>
 </head>
 <body>
-	<main>
-	</main>
+	<h1>This is Page 1</h1>
+	<ul>
+		<li><a href="page2.html">Page 2</a></li>
+		<li><a href="https://en.wikipedia.org">Wikipedia</a></li>
+	</ul>
+	<div>
+		<label>
+			<input type="checkbox" checked disabled/>
+			This checkbox might become enabled.
+		</label>
+		<br/>
+		<input type="text" id="textbox"/>
+	</div>
+	<div id="scratch">
+		This area has been intentionally left somewhat blank.
+	</div>
+	<div>
+		<button type="button" onclick="document.getElementById('scratch').innerHTML = x">Show x</button>
+		<button type="button" onclick="x = 0">Set x = 0</button>
+	</div>
 	<script src="../src/page-modification.js"></script>
 </body>
 </html>

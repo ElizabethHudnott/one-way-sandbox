@@ -4,6 +4,8 @@ if (!('Unsandbox' in window)) {
 }
 
 {
+	const parentWindow = window.opener? window.opener : window.parent;
+
 	/*	Converts a string into a live list of nodes.
 		@param {string} html The HTML to convert into DOM objects.
 		@return {NodeList}
@@ -14,21 +16,48 @@ if (!('Unsandbox' in window)) {
 	    return template.content.childNodes;
 	}
 
+	function beforeUnload() {
+		const activeElem = document.activeElement;
+		if (activeElem !== null) {
+			const linkOrigin = activeElem.protocol + '//' + activeElem.host;
+			const ourOrigin = window.location.protocol + '//' + window.location.host;
+			if (linkOrigin === ourOrigin) {
+				const path = activeElem.pathname + activeElem.search;
+				parentWindow.postMessage({eventType: 'navigation', value: path}, '*');
+				return;
+			}
+		}
+		parentWindow.postMessage({eventType: 'unload'}, '*');
+	}
+
 	function modifyPage(event) {
-		if (event.source !== window.parent) {
+		if (event.source !== parentWindow) {
 			return;
 		}
 
-		let modification = event.data;
+		const modification = event.data;
 		if (typeof(modification) !== 'object') {
 			return;
 		}
 
-		let selector = modification.selector;
-		let operation = modification.operation;
-		let name = modification.name;
-		let value = modification.value;
+		const selector = modification.selector;
+		const operation = modification.operation;
+		const name = modification.name;
+		const value = modification.value;
 		let elements;
+
+		if (operation === undefined || (selector === undefined && name === undefined && !/^(reload)$/.test(operation))) {
+			return;
+		}
+		event.stopImmediatePropagation();
+
+		switch (operation) {
+		case 'reload':
+			window.removeEventListener('beforeunload', beforeUnload);
+			window.location.reload();
+			return;
+			break;
+		}
 
 		if (selector === undefined) {
 			elements = [window];
@@ -72,7 +101,7 @@ if (!('Unsandbox' in window)) {
 
 			switch (operation) {
 			case 'append':
-				let newNodes = htmlToNodes(value);
+				let newNodes = Unsandbox.htmlToNodes(value);
 				while (newNodes.length > 0) {
 					element.appendChild(newNodes[0]);
 				}
@@ -109,14 +138,12 @@ if (!('Unsandbox' in window)) {
 
 	Unsandbox.resandbox = function () {
 		window.removeEventListener('message', modifyPage);
-		window.parent.postMessage({type: 'unload'}, '*');
+		parentWindow.postMessage({eventType: 'unload'}, '*');
 	}
 
 	//Signal to the container page to stop sending any more data.
-	window.addEventListener('beforeunload', function (event) {
-		window.parent.postMessage({type: 'unload'}, '*');
-	});
+	window.addEventListener('beforeunload', beforeUnload);
 
 	//Signal to the container page that we're loaded and ready.
-	window.parent.postMessage({type: 'load'}, '*');
+	parentWindow.postMessage({eventType: 'load'}, '*');
 }

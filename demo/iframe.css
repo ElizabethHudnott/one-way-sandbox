@@ -1,0 +1,8 @@
+input[type=text] {
+	width: 300px;
+}
+
+ins {
+	text-decoration-style: wavy;
+	text-decoration-color: #00bb00;
+}
