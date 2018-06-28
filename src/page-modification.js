@@ -5,6 +5,7 @@ if (!('Unsandbox' in window)) {
 
 {
 	const parentWindow = window.opener? window.opener : window.parent;
+	const myURL = document.currentScript.src;
 
 	/*	Converts a string into a live list of nodes.
 		@param {string} html The HTML to convert into DOM objects.
@@ -46,7 +47,7 @@ if (!('Unsandbox' in window)) {
 		const value = modification.value;
 		let elements;
 
-		if (operation === undefined || (selector === undefined && name === undefined && !/^(reload)$/.test(operation))) {
+		if (operation === undefined || (selector === undefined && name === undefined && !/^(reload|srcdoc)$/.test(operation))) {
 			return;
 		}
 		event.stopImmediatePropagation();
@@ -93,6 +94,8 @@ if (!('Unsandbox' in window)) {
 			lastName = names[names.length - 1];
 		}
 
+		let charIndex;
+
 		for (const element of elements) {
 			let obj = element;
 			for (let i = 0; i < names.length - 1; i++) {
@@ -124,6 +127,16 @@ if (!('Unsandbox' in window)) {
 			case 'setAttribute':
 				element.setAttribute(name, value);
 				break;
+			case 'srcdoc':
+				window.removeEventListener('beforeunload', beforeUnload);
+				charIndex = value.lastIndexOf('</body>');
+				if (charIndex === -1) {
+					document.writeln(value + '<script src="' + myURL + '"></script>');
+				} else {
+					document.writeln(value.slice(0, charIndex) + '<script src="' + myURL + '"></script></body></html>');
+				}
+				document.close();
+				break;
 			default:
 				console.error('Document update: unknown operation ' + operation);
 			}
@@ -139,9 +152,12 @@ if (!('Unsandbox' in window)) {
 	Unsandbox.resandbox = function () {
 		window.removeEventListener('message', modifyPage);
 		parentWindow.postMessage({eventType: 'unload'}, '*');
+		window.removeEventListener('beforeunload', beforeUnload);
 	}
 
-	//Signal to the container page to stop sending any more data.
+	/*	Signal to the container page to stop sending any more data if we navigate to another
+		origin or notify the container page of the new address otherwise.
+	*/
 	window.addEventListener('beforeunload', beforeUnload);
 
 	//Signal to the container page that we're loaded and ready.

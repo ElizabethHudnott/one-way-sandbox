@@ -66,8 +66,8 @@ Sets Element.style.xxx
 - [ ] toggle	x = !x
 
 ## Miscellaneous
-- [ ] reload
-- [ ] srcDoc
+- [x] reload
+- [x] srcDoc
 
 # Operations for Querying
 Query operations return promises.
@@ -122,3 +122,6 @@ These operate on a collection of matches.
 # Error Types
 - TargetNotFound
 - UnknownOperation
+
+# Not Demo Supplied Yet
+- srcdoc
