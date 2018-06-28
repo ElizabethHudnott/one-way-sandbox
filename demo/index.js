@@ -74,6 +74,14 @@ function sendRemoveClass() {
 	});
 }
 
+function sendRemoveStyle() {
+	Unsandbox.send('inner', {
+		operation: 'removeStyle',
+		selector: 'body',
+		name: 'background-color',
+	});
+}
+
 function sendSet() {
 	Unsandbox.send('inner', {
 		operation: 'set',
@@ -88,6 +96,15 @@ function sendSetAttribute() {
 		selector: '#textbox',
 		name: 'value',
 		value: 'Parent document wrote this'
+	});
+}
+
+function sendSetStyle() {
+	Unsandbox.send('inner', {
+		operation: 'setStyle',
+		selector: 'body',
+		name: 'background-color',
+		value: 'lavender',
 	});
 }
 

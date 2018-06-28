@@ -30,6 +30,28 @@
 			}
 		}
 
+		function toCamelCase(str) {
+			str = str.toLowerCase();
+			let match = str.match(/^-(\w+)-(.*)$/);
+			if (match !== null) {
+				let vendorPrefix;
+				switch (match[1]) {
+				case 'moz':
+					vendorPrefix = 'Moz';
+					break;
+				case 'webkit':
+					vendorPrefix = 'Webkit';
+					break;
+				default:
+					vendorPrefix = match[1];
+				}
+				str = vendorPrefix + match[2][0].toUpperCase() + match[2].slice(1);
+			}
+			return str.replace(/-(\w)/g, function (match, initialLetter) {
+				return initialLetter.toUpperCase();
+			});
+		}
+
 		/*	Converts a string into a live list of nodes.
 			@param {string} html The HTML to convert into DOM objects.
 			@return {NodeList}
@@ -130,6 +152,9 @@
 				case 'removeClass':
 					element.classList.remove(name);
 					break;
+				case 'removeStyle':
+					element.style[toCamelCase(name)] = null;
+					break;
 				case 'set':
 					[obj, jsPropertyName] = findObject(name, element);
 					obj[jsPropertyName] = value;
@@ -146,6 +171,9 @@
 						document.writeln(value.slice(0, charIndex) + '<script src="' + myURL + '"></script></body></html>');
 					}
 					document.close();
+					break;
+				case 'setStyle':
+					element.style[toCamelCase(name)] = value;
 					break;
 				case 'toggleClass':
 					element.classList.toggle(name);

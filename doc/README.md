@@ -37,15 +37,15 @@
 ## CSS
 ### Element Classes
 - [x] addClass
-- [ ] removeClass
+- [x] removeClass
 - [ ] replaceClass
-- [ ] toggleClass
+- [x] toggleClass
 
 ### style Attribute
 Sets Element.style.xxx
 - [ ] incrementStyle
-- [ ] removeStyle
-- [ ] setStyle
+- [x] removeStyle
+- [x] setStyle
 
 ### Property Declarations in Stylesheets
 - [ ] incrementProperty
