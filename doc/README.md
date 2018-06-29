@@ -27,6 +27,7 @@
 - [ ] update
 - [ ] wrap (like jQuery)
 - [ ] wrapAll (like jQuery)
+- [ ] MathJax support
 
 ### Element Attributes
 - [ ] incrementAttribute
@@ -47,19 +48,26 @@ Sets Element.style.xxx
 - [x] removeStyle
 - [x] setStyle
 
-### Property Declarations in Stylesheets
+### Style Sheets
+- [ ] addStyleSheet
+- [ ] toggleStyleSheet
+
+### Declarations Inside a Style Sheet
 - [ ] incrementProperty
 - [ ] removeProperty
 - [ ] setProperty
+- [ ] other kinds of declarations
 
 ## JavaScript
 - [ ] addEventListener
 - [ ] removeEventListener
+- [x] addScript (append a `<script>` tag)
 - [ ] update	x = f(x, v)
 - [ ] methodUpdate	x = x.f(v)
 - [ ] filterUpdate	x = x.filter(f)
 - [ ] mapUpdate	x = x.map(f)
-- [ ] call		x(v) or x(v, f)
+- [x] call		x(v)
+	- [ ] or	x(v, f)
 - [ ] forEach	f(x)
 - [ ] increment	x = x + v
 - [ ] set		x = v or x = f(v)
@@ -106,12 +114,15 @@ These operate on a collection of matches.
 - [x] Array of child indices
 - [x] CSS selector
 
-# Attributes
+# Properties of a Request Object
 - [x] operation
 - [x] selector
 - [x] name (list of dot separated or square bracketed JS property names (without quotes))
-- [x] value/args
+- [x] value or args
 - [ ] func
+- [ ] mathJax (true/false if new content needs MathJax parsing)
+- [x] integrity (addScript and addStyleSheet only)
+- [ ] id (addStyleSheet only)
 
 # Events
 - [ ] error

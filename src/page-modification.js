@@ -86,23 +86,36 @@
 				return;
 			}
 
-			const selector = modification.selector;
 			const operation = modification.operation;
+			const selector = modification.selector;
 			const name = modification.name;
 			const value = modification.value;
+			const args = modification.args;
 			let elements;
 
 			if (operation === undefined || (selector === undefined && name === undefined && !/^(reload|srcdoc)$/.test(operation))) {
 				return;
 			}
+			if (!Array.isArray(args)) {
+				console.error('Document update: args must be an array.');
+				return;
+			}
 			event.stopImmediatePropagation();
 
 			switch (operation) {
+			case 'addScript':
+				let element = document.createElement('script');
+				element.setAttribute('src', name);
+				element.setAttribute('crossorigin', 'anonymous');
+				if (modification.integrity !== undefined) {
+					element.setAttribute('integrity', modification.integrity);
+				}
+				document.head.appendChild(element);
+				return;
 			case 'reload':
 				window.removeEventListener('beforeunload', beforeUnload);
 				window.location.reload();
 				return;
-				break;
 			}
 
 			if (selector === undefined) {
@@ -136,6 +149,10 @@
 					while (newNodes.length > 0) {
 						element.appendChild(newNodes[0]);
 					}
+					break;
+				case 'call':
+					[obj, jsPropertyName] = findObject(name, element);
+					obj[jsPropertyName].apply(obj, args);
 					break;
 				case 'innerHTML':
 					element.innerHTML = value;

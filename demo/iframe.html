@@ -3,9 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<link rel="stylesheet" href="iframe.css"/>
-	<script>
-		window.x = 0;
-	</script>
+	<script src="iframe.js"></script>
 </head>
 <body>
 	<h1>This is Page 1</h1>
@@ -27,6 +25,11 @@
 	<div>
 		<button type="button" onclick="document.getElementById('scratch').innerHTML = x">Show x</button>
 		<button type="button" onclick="x = 0">Set x = 0</button>
+	</div>
+	<div>
+		\begin{equation}
+			a^2 = b^2 + c^2
+		\end{equation}
 	</div>
 	<script src="../src/page-modification.js"></script>
 </body>

@@ -21,11 +21,26 @@ function sendAddClass() {
 	});
 }
 
+function sendAddScript() {
+	Unsandbox.send('inner', {
+		operation: 'addScript',
+		name: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_CHTML',
+	});
+}
+
 function sendAppend() {
 	Unsandbox.send('inner', {
 		operation: 'append',
 		selector: 'body',
 		value: '<div><ins><em>This content has been <strong>added</strong> by the parent document.</em></ins></div>'
+	});
+}
+
+function sendCall() {
+	Unsandbox.send('inner', {
+		operation: 'call',
+		name: 'f',
+		args: [ document.getElementById('arg').value ],
 	});
 }
 

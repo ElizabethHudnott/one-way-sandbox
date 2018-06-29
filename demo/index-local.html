@@ -11,7 +11,9 @@
 	<iframe id="inner" src="iframe.html"></iframe>
 	<ul id="commands">
 		<li><button type="button" onclick="sendAddClass()">addClass</button></li>
+		<li><button type="button" onclick="sendAddScript()">addScript</button></li>
 		<li><button type="button" onclick="sendAppend()">append</button></li>
+		<li><button type="button" onclick="sendCall()">call</button></li>
 		<li><button type="button" onclick="sendInnerHTML()">innerHTML</button></li>
 		<li><button type="button" onclick="sendOuterHTML()">outerHTML</button></li>
 		<li><button type="button" onclick="sendReload()">reload</button></li>
@@ -26,5 +28,11 @@
 		<li><button type="button" onclick="sendToggleAttribute()">toggleAttribute</button></li>
 		<li><button type="button" onclick="sendToggleClass()">toggleClass</button></li>
 	</ul>
+	<div>
+		<label>
+			Argument:
+			<input id="arg" value="42"/>
+		</label>
+	</div>
 </body>
 </html>
