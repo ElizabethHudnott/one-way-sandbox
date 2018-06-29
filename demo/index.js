@@ -82,6 +82,15 @@ function sendRemoveStyle() {
 	});
 }
 
+function sendReplaceClass() {
+	Unsandbox.send('inner', {
+		operation: 'replaceClass',
+		selector: 'body',
+		name: 'lemon',
+		value: 'cursive',
+	});
+}
+
 function sendSet() {
 	Unsandbox.send('inner', {
 		operation: 'set',
@@ -105,6 +114,14 @@ function sendSetStyle() {
 		selector: 'body',
 		name: 'background-color',
 		value: 'lavender',
+	});
+}
+
+function sendToggleAttribute() {
+	Unsandbox.send('inner', {
+		operation: 'toggleAttribute',
+		selector: 'input[type=checkbox]',
+		name: 'checked',
 	});
 }
 

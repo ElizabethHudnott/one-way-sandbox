@@ -15,5 +15,16 @@ body {
 #commands {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: space-between;
 	list-style-type: none;
+	margin: 1rem auto 0;
+	padding: 0;
+}
+
+#commands>* {
+	margin: 0.3rem;
+}
+
+#commands>*:last-child {
+	margin-right: auto;
 }

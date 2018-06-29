@@ -155,6 +155,9 @@
 				case 'removeStyle':
 					element.style[toCamelCase(name)] = null;
 					break;
+				case 'replaceClass':
+					element.classList.replace(name, value);
+					break;
 				case 'set':
 					[obj, jsPropertyName] = findObject(name, element);
 					obj[jsPropertyName] = value;
@@ -174,6 +177,13 @@
 					break;
 				case 'setStyle':
 					element.style[toCamelCase(name)] = value;
+					break;
+				case 'toggleAttribute':
+					if (element.hasAttribute(name)) {
+						element.removeAttribute(name);
+					} else {
+						element.setAttribute(name, name);
+					}
 					break;
 				case 'toggleClass':
 					element.classList.toggle(name);

@@ -32,13 +32,13 @@
 - [ ] incrementAttribute
 - [x] removeAttribute
 - [x] setAttribute
-- [ ] toggleAttribute
+- [x] toggleAttribute
 
 ## CSS
 ### Element Classes
 - [x] addClass
 - [x] removeClass
-- [ ] replaceClass
+- [x] replaceClass
 - [x] toggleClass
 
 ### style Attribute
