@@ -4,6 +4,7 @@
 - removeXXX
 - setXXX
 - toggleXXX
+- xxx (enabled `true` or `false`)
 
 # Operations for Making Changes
 ## HTML
@@ -13,8 +14,8 @@
 - [ ] addEventListener
 - [ ] removeEventListener
 - [x] append
+- [ ] element (enabled `true` or `false`)
 - [ ] filterUpdate
-- [ ] increment
 - [ ] insertBefore
 - [ ] insertAfter
 - [ ] mapUpdate
@@ -30,6 +31,7 @@
 - [ ] MathJax support
 
 ### Element Attributes
+- [ ] attribute (enabled `true` or `false`)
 - [ ] incrementAttribute
 - [x] removeAttribute
 - [x] setAttribute
@@ -38,6 +40,7 @@
 ## CSS
 ### Element Classes
 - [x] addClass
+- [ ] class (enabled `true` or `false`)
 - [x] removeClass
 - [x] replaceClass
 - [x] toggleClass
@@ -50,15 +53,18 @@ Sets Element.style.xxx
 
 ### Style Sheets
 - [ ] addStyleSheet
-- [ ] toggleStyleSheet
+- [ ] removeStyleSheet
+- [ ] styleSheet (enabled `true` or `false`)
+- [ ] toggleStyleSheet (enable/disable)
 
 ### Declarations Inside a Style Sheet
 - [ ] incrementProperty
 - [ ] removeProperty
 - [ ] setProperty
-- [ ] other kinds of declarations
+- [ ] features relating to other kinds of declarations
 
 ## JavaScript
+The `x = `... forms (except for `toggle`) can be applied to elements too. `x` is considered to be the `innerHTML` of the element in this case.
 - [ ] addEventListener
 - [ ] removeEventListener
 - [x] addScript (append a `<script>` tag)
@@ -69,8 +75,10 @@ Sets Element.style.xxx
 - [x] call		x(v)
 	- [ ] or	x(v, f)
 - [ ] forEach	f(x)
-- [ ] increment	x = x + v
-- [ ] set		x = v or x = f(v)
+- [x] increment	x = x + v
+- [x] set		x = v
+	- [ ] or	x = f(v)
+	- [ ] applied to elements
 - [ ] toggle	x = !x
 
 ## Miscellaneous

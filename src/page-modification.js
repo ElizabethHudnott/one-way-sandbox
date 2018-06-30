@@ -96,7 +96,7 @@
 			if (operation === undefined || (selector === undefined && name === undefined && !/^(reload|srcdoc)$/.test(operation))) {
 				return;
 			}
-			if (!Array.isArray(args)) {
+			if (args !== undefined && !Array.isArray(args)) {
 				console.error('Document update: args must be an array.');
 				return;
 			}
@@ -153,6 +153,16 @@
 				case 'call':
 					[obj, jsPropertyName] = findObject(name, element);
 					obj[jsPropertyName].apply(obj, args);
+					break;
+				case 'increment':
+					const amount = value === undefined? 1 : value;
+					if (name === undefined) {
+						let value = parseFloat(element.innerHTML) + amount;
+						element.innerHTML = value;
+					} else {
+						[obj, jsPropertyName] = findObject(name, element);
+						obj[jsPropertyName] = obj[jsPropertyName] + amount;
+					}
 					break;
 				case 'innerHTML':
 					element.innerHTML = value;

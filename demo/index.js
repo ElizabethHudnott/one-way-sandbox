@@ -44,6 +44,20 @@ function sendCall() {
 	});
 }
 
+function sendIncrementHTML() {
+	Unsandbox.send('inner', {
+		operation: 'increment',
+		selector: '#scratch',
+	});
+}
+
+function sendIncrementJS() {
+	Unsandbox.send('inner', {
+		operation: 'increment',
+		name: 'x',
+	});
+}
+
 function sendInnerHTML() {
 	Unsandbox.send('inner', {
 		operation: 'innerHTML',
@@ -110,7 +124,7 @@ function sendSet() {
 	Unsandbox.send('inner', {
 		operation: 'set',
 		name: 'x',
-		value: '5'
+		value: 5
 	});
 }
 
