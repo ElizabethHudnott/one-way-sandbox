@@ -41,10 +41,12 @@
 		}
 	}
 
-	Unsandbox.addWindow = function (windowToAdd) {
-		if (!listeners.has(windowToAdd)) {
-			init(windowToAdd);
-		}
+	Unsandbox.addWindow = function (url, windowName, windowFeatures) {
+		const temporaryWindow = window.open('', windowName);
+		temporaryWindow.close();
+		const windowToAdd = window.open(url, windowName, windowFeatures === undefined? '' : windowFeatures);
+		init(windowToAdd);
+		return windowToAdd;
 	}
 
 	Unsandbox.removeWindow = function (windowToRemove) {
@@ -93,7 +95,6 @@
 			requestID++;
 			command.requestID = requestID;
 			destination.postMessage(command, '*');
-
 			if (command.operation.slice(0, 3) === 'get') {
 				const promise = pendingPromise();
 				promises.set(requestID, promise);
@@ -116,7 +117,6 @@
 			return;
 		}
 		event.stopImmediatePropagation();
-
 		if (eventType === 'navigation' && !paramAllowNavigation) {
 			eventType = 'unload';
 		}

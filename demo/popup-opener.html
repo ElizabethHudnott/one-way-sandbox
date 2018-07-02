@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Pop Up Opener</title>
+	<script src="../src/page-modifier.js?allownavigation"></script>
+	<script>
+		let popUpWindow;
+
+		function addLogs() {
+			Unsandbox.addEventListener(popUpWindow, 'load', function () {
+				console.log('Event: page loaded');
+			});
+			Unsandbox.addEventListener(popUpWindow, 'navigation', function (url) {
+				console.log('Event: navigating to ' + url);
+			});
+			Unsandbox.addEventListener(popUpWindow, 'unload', function () {
+				console.log('Event: unloaded');
+			});
+		}
+
+		function openPopUp() {
+			popUpWindow = Unsandbox.addWindow('iframe.html', 'popup');
+			addLogs();
+		}
+	</script>
+</head>
+<body>
+	<button type="button" onclick="openPopUp()">Open Pop Up</button>
+</body>
+</html>

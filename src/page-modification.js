@@ -1,6 +1,8 @@
 'use strict';
 {
 	const parentWindow = window.parent !== window? window.parent : window.opener;
+	const origin = window.location.protocol + '//' + window.location.host;
+	const msgTarget = window.location.protocol === 'file:'? '*' : origin;
 
 	if (parentWindow) {
 		const myURL = document.currentScript.src;
@@ -47,21 +49,20 @@
 				errorName: errorName,
 				value: message,
 				requestID: requestID
-			}, '*');
+			}, msgTarget);
 		}
 
 		function beforeUnload() {
 			const activeElem = document.activeElement;
 			if (activeElem !== null) {
 				const linkOrigin = activeElem.protocol + '//' + activeElem.host;
-				const ourOrigin = window.location.protocol + '//' + window.location.host;
-				if (linkOrigin === ourOrigin) {
+				if (linkOrigin === origin) {
 					const path = activeElem.pathname + activeElem.search;
-					parentWindow.postMessage({eventType: 'navigation', value: path}, '*');
+					parentWindow.postMessage({eventType: 'navigation', value: path}, msgTarget);
 					return;
 				}
 			}
-			parentWindow.postMessage({eventType: 'unload'}, '*');
+			parentWindow.postMessage({eventType: 'unload'}, msgTarget);
 		}
 
 		function modifyPage(event) {
@@ -233,7 +234,7 @@ loop:		for (const element of elements) {
 			}
 
 			if (returnValues.length > 0) {
-				parentWindow.postMessage({eventType: 'return', requestID: requestID, value: returnValues}, '*');
+				parentWindow.postMessage({eventType: 'return', requestID: requestID, value: returnValues}, msgTarget);
 			}
 		}
 
@@ -245,7 +246,7 @@ loop:		for (const element of elements) {
 
 		Unsandbox.resandbox = function () {
 			window.removeEventListener('message', modifyPage);
-			parentWindow.postMessage({eventType: 'unload'}, '*');
+			parentWindow.postMessage({eventType: 'unload'}, msgTarget);
 			window.removeEventListener('beforeunload', beforeUnload);
 		}
 
@@ -255,7 +256,7 @@ loop:		for (const element of elements) {
 		window.addEventListener('beforeunload', beforeUnload);
 
 		//Signal to the container page that we're loaded and ready.
-		parentWindow.postMessage({eventType: 'load'}, '*');
+		parentWindow.postMessage({eventType: 'load'}, msgTarget);
 
 	}
 }
