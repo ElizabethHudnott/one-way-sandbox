@@ -146,6 +146,20 @@ function sendSetStyle() {
 	});
 }
 
+function sendToggleHTML() {
+	Unsandbox.send('inner', {
+		operation: 'toggle',
+		selector: '#links',
+	});
+}
+
+function sendToggleJS() {
+	Unsandbox.send('inner', {
+		operation: 'toggle',
+		name: 'x',
+	});
+}
+
 function sendToggleAttribute() {
 	Unsandbox.send('inner', {
 		operation: 'toggleAttribute',

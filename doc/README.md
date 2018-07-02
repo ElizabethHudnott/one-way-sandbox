@@ -1,5 +1,6 @@
 # General Patterns
 - getXXX
+- getXXXs
 - incrementXXX
 - removeXXX
 - setXXX
@@ -24,7 +25,7 @@
 - [ ] scrollIntoView
 - [ ] hide
 - [ ] show
-- [ ] toggle
+- [x] toggle
 - [ ] update
 - [ ] wrap (like jQuery)
 - [ ] wrapAll (like jQuery)
@@ -79,7 +80,7 @@ The `x = `... forms (except for `toggle`) can be applied to elements too. `x` is
 - [x] set		x = v
 	- [ ] or	x = f(v)
 	- [ ] applied to elements
-- [ ] toggle	x = !x
+- [x] toggle	x = !x
 
 ## Miscellaneous
 - [x] reload
@@ -92,12 +93,16 @@ Query operations return promises.
 - [ ] innerHTML
 - [ ] outerHTML
 - [ ] getAttribute
+- [ ] getAttributes
 
 ## CSS
 - [ ] hasClass
+- [ ] getClasses
 - [ ] getComputedStyle
 - [ ] getStyle
+- [ ] getStyles
 - [ ] getProperty
+- [ ] getProperties
 
 ## JavaScript
 ### General

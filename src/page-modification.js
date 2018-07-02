@@ -30,28 +30,6 @@
 			}
 		}
 
-		function toCamelCase(str) {
-			str = str.toLowerCase();
-			let match = str.match(/^-(\w+)-(.*)$/);
-			if (match !== null) {
-				let vendorPrefix;
-				switch (match[1]) {
-				case 'moz':
-					vendorPrefix = 'Moz';
-					break;
-				case 'webkit':
-					vendorPrefix = 'Webkit';
-					break;
-				default:
-					vendorPrefix = match[1];
-				}
-				str = vendorPrefix + match[2][0].toUpperCase() + match[2].slice(1);
-			}
-			return str.replace(/-(\w)/g, function (match, initialLetter) {
-				return initialLetter.toUpperCase();
-			});
-		}
-
 		/*	Converts a string into a live list of nodes.
 			@param {string} html The HTML to convert into DOM objects.
 			@return {NodeList}
@@ -94,6 +72,7 @@
 			let elements;
 
 			if (operation === undefined || (selector === undefined && name === undefined && !/^(reload|srcdoc)$/.test(operation))) {
+				console.warn('Document update: proposed modification has no selector or a property name set.');
 				return;
 			}
 			if (args !== undefined && !Array.isArray(args)) {
@@ -139,7 +118,7 @@
 
 			let charIndex, obj, jsPropertyName;
 
-			for (const element of elements) {
+loop:		for (const element of elements) {
 				switch (operation) {
 				case 'addClass':
 					element.classList.add(name);
@@ -180,7 +159,7 @@
 					element.classList.remove(name);
 					break;
 				case 'removeStyle':
-					element.style[toCamelCase(name)] = null;
+					element.style.removeProperty(name);
 					break;
 				case 'replaceClass':
 					element.classList.replace(name, value);
@@ -203,7 +182,20 @@
 					document.close();
 					break;
 				case 'setStyle':
-					element.style[toCamelCase(name)] = value;
+					element.style.setProperty(name, value);
+					break;
+				case 'toggle':
+					if (name === undefined) {
+						const display = getComputedStyle(element).getPropertyValue('display');
+						if (display === 'none') {
+							element.style.display = null;
+						} else {
+							element.style.display = 'none';
+						}
+					} else {
+						[obj, jsPropertyName] = findObject(name, element);
+						obj[jsPropertyName] = !obj[jsPropertyName];
+					}
 					break;
 				case 'toggleAttribute':
 					if (element.hasAttribute(name)) {
@@ -217,6 +209,7 @@
 					break;
 				default:
 					console.error('Document update: unknown operation ' + operation);
+					break loop;
 				}
 			}
 		}
