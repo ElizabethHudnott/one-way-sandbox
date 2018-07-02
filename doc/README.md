@@ -5,7 +5,7 @@
 - removeXXX
 - setXXX
 - toggleXXX
-- xxx (enabled `true` or `false`)
+- useXXX (Boolean argument, enables or disables the item)
 
 # Operations for Making Changes
 ## HTML
@@ -15,7 +15,6 @@
 - [ ] addEventListener
 - [ ] removeEventListener
 - [x] append
-- [ ] element (enabled `true` or `false`)
 - [ ] filterUpdate
 - [ ] insertBefore
 - [ ] insertAfter
@@ -24,7 +23,7 @@
 - [x] remove
 - [ ] scrollIntoView
 - [ ] hide
-- [ ] show
+- [ ] show (with optional `true` or `false` argument)
 - [x] toggle
 - [ ] update
 - [ ] wrap (like jQuery)
@@ -32,19 +31,19 @@
 - [ ] MathJax support
 
 ### Element Attributes
-- [ ] attribute (enabled `true` or `false`)
 - [ ] incrementAttribute
 - [x] removeAttribute
 - [x] setAttribute
+- [ ] setBooleanAttribute
 - [x] toggleAttribute
 
 ## CSS
 ### Element Classes
 - [x] addClass
-- [ ] class (enabled `true` or `false`)
 - [x] removeClass
 - [x] replaceClass
 - [x] toggleClass
+- [ ] useClass
 
 ### style Attribute
 Sets Element.style.xxx
@@ -55,8 +54,8 @@ Sets Element.style.xxx
 ### Style Sheets
 - [ ] addStyleSheet
 - [ ] removeStyleSheet
-- [ ] styleSheet (enabled `true` or `false`)
-- [ ] toggleStyleSheet (enable/disable)
+- [ ] toggleStyleSheet (toggles disabled attribute)
+- [ ] useStyleSheet
 
 ### Declarations Inside a Style Sheet
 - [ ] incrementProperty
@@ -93,6 +92,7 @@ Query operations return promises.
 - [ ] innerHTML
 - [ ] outerHTML
 - [ ] getAttribute
+- [ ] getBooleanAttribute
 - [ ] getAttributes
 
 ## CSS
@@ -138,15 +138,13 @@ These operate on a collection of matches.
 - [ ] id (addStyleSheet only)
 
 # Events
-- [ ] error
 - [x] load
 - [x] navigation
-- [ ] return
 - [x] unload
 
 # Error Types
-- TargetNotFound
-- UnknownOperation
+- BadArgs
+- NoSuchElement
 
 # URL Parameters
 - `allownavigation`: Fires ` navigation` and `load` events when clicking on a link to another page within the same site instead of `unload` events. The same-site protection can be circumvented by an attacker if they're able to inject code into the child window.

@@ -40,6 +40,16 @@
 		    return template.content.childNodes;
 		}
 
+		function sendError(errorName, message, requestID) {
+			console.error('Page modification: ' + message);
+			parentWindow.postMessage({
+				eventType: 'error',
+				errorName: errorName,
+				value: message,
+				requestID: requestID
+			}, '*');
+		}
+
 		function beforeUnload() {
 			const activeElem = document.activeElement;
 			if (activeElem !== null) {
@@ -69,14 +79,19 @@
 			const name = modification.name;
 			const value = modification.value;
 			const args = modification.args;
+			const requestID = modification.requestID;
 			let elements;
 
-			if (operation === undefined || (selector === undefined && name === undefined && !/^(reload|srcdoc)$/.test(operation))) {
-				console.warn('Document update: proposed modification has no selector or a property name set.');
+			if (operation === undefined) {
+				return;
+			}
+			if (selector === undefined && name === undefined && !/^(reload|srcdoc)$/.test(operation)) {
+				sendError('BadArgs', 'Missing selector or attribute name.', requestID);
 				return;
 			}
 			if (args !== undefined && !Array.isArray(args)) {
-				console.error('Document update: args must be an array.');
+				//Throws an incomprehensible error message otherwise.
+				sendError('BadArgs', 'args must be an array.', requestID);
 				return;
 			}
 			event.stopImmediatePropagation();
@@ -107,7 +122,7 @@
 				for (const index of selector) {
 					let children = element.children;
 					if (index >= children.length) {
-						console.error('Document update: insufficient number of child nodes at depth ' + depth + ' in path ' + selector);
+						sendError('NoSuchElement', 'Insufficient number of child nodes at depth ' + depth + ' in path ' + selector);
 						return;
 					}
 					element = children[index];
@@ -117,6 +132,7 @@
 			}
 
 			let charIndex, obj, jsPropertyName;
+			let returnValues = [];
 
 loop:		for (const element of elements) {
 				switch (operation) {
@@ -132,6 +148,9 @@ loop:		for (const element of elements) {
 				case 'call':
 					[obj, jsPropertyName] = findObject(name, element);
 					obj[jsPropertyName].apply(obj, args);
+					break;
+				case 'getAttribute':
+					returnValues.push(element.getAttribute(name));
 					break;
 				case 'increment':
 					const amount = value === undefined? 1 : value;
@@ -208,9 +227,13 @@ loop:		for (const element of elements) {
 					element.classList.toggle(name);
 					break;
 				default:
-					console.error('Document update: unknown operation ' + operation);
+					sendError('BadArgs', 'Unknown operation ' + operation);
 					break loop;
 				}
+			}
+
+			if (returnValues.length > 0) {
+				parentWindow.postMessage({eventType: 'return', requestID: requestID, value: returnValues}, '*');
 			}
 		}
 

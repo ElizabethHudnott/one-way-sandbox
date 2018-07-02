@@ -8,13 +8,16 @@
 	const urlParams = new URLSearchParams(myURL.indexOf('?') !== -1? myURL.slice(myURL.indexOf('?')) : '');
 	const paramAllowNavigation = /^(true|1)?$/i.test(urlParams.get('allownavigation'));
 
-	let loadListeners = new Map();
-	let listeners = new Map();
+	const loadListeners = new Map();
+	const listeners = new Map();
+	const promises = new Map();
 
-	function CustomError(name, data) {
+	let requestID = 0;
+
+	function CustomError(name, data, message) {
 		this.name = name;
-		this.message = data;
-		this.data = data;
+		this.message = message === undefined? data : message;
+		this.data;
 	}
 	CustomError.prototype = new Error();
 
@@ -55,23 +58,52 @@
 		listeners.get(target)[type].push(listener);
 	}
 
+	function pendingPromise() {
+		let onresolve, onreject;
+		const promise = new Promise(function (resolve, reject) {
+			onresolve = resolve;
+			onreject = reject;
+		});
+		promise.onresolve = onresolve;
+		promise.onreject = onreject;
+		return promise;
+	}
+
 	Unsandbox.send = function (target, command) {
+		if (command.operation === undefined) {
+			throw new CustomError('BadArgs', 'operation', 'Operation not specified.');
+		}
+
+		let destination = undefined;
 		if (typeof(target) === 'string') {
 			const destinationElement = document.getElementById(target);
 			if (destinationElement !== null) {
 				const destinationWindow = destinationElement.contentWindow;
 				if (destinationWindow) {
 					if (listeners.has(destinationWindow)) {
-						destinationWindow.postMessage(command, '*');
-						return;
+						destination = destinationWindow;
 					}
 				}
 			}
 		} else if (listeners.has(target)) {
-			target.postMessage(command, '*');
-			return;
+			destination = target;
 		}
-		throw new CustomError('UnknownWindow', target);
+
+		if (destination !== undefined) {
+			requestID++;
+			command.requestID = requestID;
+			destination.postMessage(command, '*');
+
+			if (command.operation.slice(0, 3) === 'get') {
+				const promise = pendingPromise();
+				promises.set(requestID, promise);
+				return promise;
+			} else {
+				return Promise.resolve(undefined);
+			}
+		} else {
+			return Promise.reject(new CustomError('UnknownWindow', target));
+		}
 	}
 
 	window.addEventListener('message', function (event) {
@@ -80,7 +112,7 @@
 			return;
 		}
 		let eventType = data.eventType;
-		if (!/^(load|navigation|unload)$/.test(eventType)) {
+		if (!/^(error|load|navigation|return|unload)$/.test(eventType)) {
 			return;
 		}
 		event.stopImmediatePropagation();
@@ -92,12 +124,28 @@
 		const source = event.source;
 
 		if (listeners.has(source)) {
-			const listenersToFire = listeners.get(source)[eventType];
-			if (eventType === 'unload') {
-				listeners.delete(source);
-			}
-			for (const listener of listenersToFire) {
-				listener(data.value);
+			let promise;
+			switch (eventType) {
+			case 'error':
+				promise = promises.get(data.requestID);
+				if (promise !== undefined) {
+					promise.onreject(new CustomError(data.errorName, undefined, data.value));
+				}
+				break;
+			case 'return':
+				promise = promises.get(data.requestID);
+				if (promise !== undefined) {
+					promise.onresolve(data.value);
+				}
+				break;
+			default:
+				const listenersToFire = listeners.get(source)[eventType];
+				if (eventType === 'unload') {
+					listeners.delete(source);
+				}
+				for (const listener of listenersToFire) {
+					listener(data.value);
+				}
 			}
 		} else if (eventType === 'load') {
 			for (const id of loadListeners.keys()) {

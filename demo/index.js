@@ -1,3 +1,5 @@
+const outputBox = document.getElementById('return-value');
+
 function addLogs() {
 	console.log('Event: page loaded, connection initialized');
 	Unsandbox.addEventListener('inner', 'load', function () {
@@ -41,6 +43,16 @@ function sendCall() {
 		operation: 'call',
 		name: 'f',
 		args: [ document.getElementById('arg').value ],
+	});
+}
+
+function sendGetAttribute() {
+	Unsandbox.send('inner', {
+		operation: 'getAttribute',
+		selector: 'a',
+		name: 'href'
+	}).then (function (urls) {
+		outputBox.innerHTML = String(urls);
 	});
 }
 

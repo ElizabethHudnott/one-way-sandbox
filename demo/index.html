@@ -5,7 +5,6 @@
 	<title>IFrame Modifications Test</title>
 	<link rel="stylesheet" href="index.css"/>
 	<script src="../src/page-modifier.js?allownavigation"></script>
-	<script src="index.js"></script>
 </head>
 <body>
 	<iframe id="inner" src="iframe.html" sandbox="allow-scripts"></iframe>
@@ -31,12 +30,18 @@
 		<li><button type="button" onclick="sendToggleJS()">toggle JS</button></li>
 		<li><button type="button" onclick="sendToggleAttribute()">toggleAttribute</button></li>
 		<li><button type="button" onclick="sendToggleClass()">toggleClass</button></li>
+		<li><button type="button" onclick="sendGetAttribute()">getAttribute</button></li>
 	</ul>
 	<div>
 		<label>
 			Argument:
 			<input id="arg" value="42"/>
 		</label>
+		<label>
+			Return Value:
+			<output id="return-value"></output>
+		</label>
 	</div>
+	<script src="index.js"></script>
 </body>
 </html>
