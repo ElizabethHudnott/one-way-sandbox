@@ -2,9 +2,9 @@
 <html>
 <head>
 	<meta charset="UTF-8">
+	<meta http-equiv="content-security-policy" content="script-src 'self' https://cdnjs.cloudflare.com"/>
 	<link rel="stylesheet" href="iframe.css"/>
 	<script src="../src/page-modification.js"></script>
-	<script src="iframe.js"></script>
 </head>
 <body>
 	<h1>This is Page 1</h1>
@@ -24,13 +24,14 @@
 		This area has been intentionally left somewhat blank and meaningless.
 	</div>
 	<div>
-		<button type="button" onclick="document.getElementById('scratch').innerHTML = x">Show x</button>
-		<button type="button" onclick="x = 0">Set x = 0</button>
+		<button type="button" id="show-x-button">Show x</button>
+		<button type="button" id="set-x-button">Set x = 0</button>
 	</div>
 	<div>
 		\begin{equation}
 			a^2 = b^2 + c^2
 		\end{equation}
 	</div>
+	<script src="iframe.js"></script>
 </body>
 </html>

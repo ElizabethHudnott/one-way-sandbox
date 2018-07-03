@@ -164,7 +164,7 @@ These operate on a collection of matches.
 	- [ ] Works with form submission
 
 ## Child-Side
-- [x] `limitscript`: Limits requests without a selector to accessing the `Sandbox.remoteAccess` object rather than the `window` object.
+- [x] `limitscript`: Limits requests without a selector to accessing the `Sandbox.remoteAccess` object rather than the `window` object. Unless a Content Security Policy (CSP) is used then global data can still be accessed indirectly using an `addScript` operation, `setAttribute` with `onclick`, etc. (See https://developers.google.com/web/fundamentals/security/csp/)
 - [ ] `selectors` Requires the selectors used in requests to begin with one of a specified group of prefixes and not contain a comma. If `selectors` is specified then selection using array indices begins with the first element selected by the first selector rather than the `<html>` element.
 
 # No Demo Supplied Yet
