@@ -170,7 +170,11 @@ loop:		for (const element of elements) {
 					}
 					break;
 				case 'innerHTML':
-					element.innerHTML = value;
+					if ('value' in modification) {
+						element.innerHTML = String(value);
+					} else {
+						returnValues.push(element.innerHTML);
+					}
 					break;
 				case 'outerHTML':
 					element.outerHTML = value;

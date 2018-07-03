@@ -1,3 +1,5 @@
+'use strict';
+
 Unsandbox.addElement('inner');
 
 Unsandbox.addEventListener('inner', 'load', function () {
@@ -51,7 +53,7 @@ function sendGetAttribute() {
 		selector: 'a',
 		name: 'href'
 	}).then (function (urls) {
-		outputBox.innerHTML = String(urls);
+		outputBox.innerText = String(urls);
 	});
 }
 
@@ -61,7 +63,7 @@ function sendHasAttribute() {
 		selector: 'input[type=checkbox]',
 		name: 'checked',
 	}).then (function (checked) {
-		outputBox.innerHTML = String(checked);
+		outputBox.innerText = String(checked);
 	});;
 }
 
@@ -79,11 +81,20 @@ function sendIncrementJS() {
 	});
 }
 
-function sendInnerHTML() {
+function sendSetInnerHTML() {
 	Unsandbox.send('inner', {
 		operation: 'innerHTML',
 		selector: '#scratch',
 		value: '<ins><em>This content has been <strong>edited</strong> by the parent document.</em></ins>'
+	});
+}
+
+function sendGetInnerHTML() {
+	Unsandbox.send('inner', {
+		operation: 'innerHTML',
+		selector: 'ul',
+	}).then(function (html) {
+		outputBox.innerText = String(html);
 	});
 }
 

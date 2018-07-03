@@ -138,10 +138,13 @@
 		const targetWindow = findWindow(target, true);
 
 		if (targetWindow !== undefined) {
+			const operation = command.operation;
 			requestID++;
 			command.requestID = requestID;
 			targetWindow.postMessage(command, '*');
-			if (/^(get|has)/.test(command.operation)) {
+			if (/^(get|has)/.test(operation) ||
+				(!('value' in command) && /^(innerHTML)$/.test(operation))
+			) {
 				const promise = pendingPromise();
 				promises.set(requestID, promise);
 				return promise;

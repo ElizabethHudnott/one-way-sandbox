@@ -97,10 +97,10 @@ The `x = `... forms (except for `toggle`) can be applied to elements too. `x` is
 - [x] srcDoc
 
 # Operations for Querying
-Query operations return promises.
+All operations return promises, which is used to obtain the result of a query.
 
 ## HTML
-- [ ] innerHTML
+- [x] innerHTML
 - [ ] outerHTML
 - [x] getAttribute
 - [ ] getAttributes
@@ -159,13 +159,13 @@ These operate on a collection of matches.
 
 # URL Parameters
 ## Parent-Side
-- [x] `allownavigation`: Fires `navigation` and `load` events when clicking on a link to another page within the same site instead of `unload` events. The same-site protection can be circumvented by an attacker if they're able to inject code into the child window. `unload` events can be suppressed if an attacker is able to load a customized version of the child window script in place of the proper one.
+- [x] `allownavigation`: Fires `navigation` and `load` events when clicking on a link to another page within the same site instead of `unload` events. The same-site protection can easily be circumvented by an attacker if they're able to inject code into the child window. `unload` events can be suppressed if an attacker is able to load a customized version of the child window script in place of the proper one. Thus, `allownavigation` is higher risk but higher convenience but neither option is zero risk.
 	- [x] Works with hyperlinks
 	- [ ] Works with form submission
 
 ## Child-Side
 - [x] `limitscript`: Limits requests without a selector to accessing the `Sandbox.remoteAccess` object rather than the `window` object.
-- [ ] `selectors` Requires the selectors used in requests to begin with one of a specified group of prefixes.
+- [ ] `selectors` Requires the selectors used in requests to begin with one of a specified group of prefixes and not contain a comma. If `selectors` is specified then selection using array indices begins with the first element selected by the first selector rather than the `<html>` element.
 
 # No Demo Supplied Yet
 - srcdoc
