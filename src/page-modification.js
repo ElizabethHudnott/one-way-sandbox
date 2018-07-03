@@ -1,14 +1,17 @@
 'use strict';
 {
 	const parentWindow = window.parent !== window? window.parent : window.opener;
-	const origin = window.location.protocol + '//' + window.location.host;
-	const msgTarget = window.location.protocol === 'file:'? '*' : origin;
 
 	if (parentWindow) {
+		const origin = window.location.protocol + '//' + window.location.host;
+		const msgTarget = window.location.protocol === 'file:'? '*' : origin;
 		const myURL = document.currentScript.src;
+		const urlParams = new URLSearchParams(myURL.indexOf('?') !== -1? myURL.slice(myURL.indexOf('?')) : '');
+		const paramLimitScript= /^(true|1)?$/i.test(urlParams.get('limitscript'));
 
 		if (!('Unsandbox' in window)) {
 			window.Unsandbox = {};
+			Unsandbox.remoteAccess = {};
 		}
 
 		function findObject(name, begin) {
@@ -114,7 +117,7 @@
 			}
 
 			if (selector === undefined) {
-				elements = [window];
+				elements = paramLimitScript? [Unsandbox.remoteAccess] : [window];
 			} else if (typeof(selector) === 'string') {
 				elements = document.querySelectorAll(selector);
 			} else {
@@ -153,6 +156,9 @@ loop:		for (const element of elements) {
 				case 'getAttribute':
 					returnValues.push(element.getAttribute(name));
 					break;
+				case 'hasAttribute':
+					returnValues.push(element.hasAttribute(name));
+					break;
 				case 'increment':
 					const amount = value === undefined? 1 : value;
 					if (name === undefined) {
@@ -189,7 +195,13 @@ loop:		for (const element of elements) {
 					obj[jsPropertyName] = value;
 					break;
 				case 'setAttribute':
-					element.setAttribute(name, value);
+					if (value === true) {
+						element.setAttribute(name, name);
+					} else if (value === false) {
+						element.removeAttribute(name);
+					} else {
+						element.setAttribute(name, value);
+					}
 					break;
 				case 'srcdoc':
 					window.removeEventListener('beforeunload', beforeUnload);
@@ -233,7 +245,7 @@ loop:		for (const element of elements) {
 				}
 			}
 
-			if (returnValues.length > 0) {
+			if (returnValues.length > 0 || elements.length === 0) {
 				parentWindow.postMessage({eventType: 'return', requestID: requestID, value: returnValues}, msgTarget);
 			}
 		}
@@ -242,7 +254,7 @@ loop:		for (const element of elements) {
 			window.addEventListener("message", modifyPage);
 		}
 
-		Unsandbox.unsandbox();
+		window.addEventListener('load', Unsandbox.unsandbox);
 
 		Unsandbox.resandbox = function () {
 			window.removeEventListener('message', modifyPage);

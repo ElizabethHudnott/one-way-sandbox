@@ -8,7 +8,8 @@
 	const urlParams = new URLSearchParams(myURL.indexOf('?') !== -1? myURL.slice(myURL.indexOf('?')) : '');
 	const paramAllowNavigation = /^(true|1)?$/i.test(urlParams.get('allownavigation'));
 
-	const loadListeners = new Map();
+	const windows = new Set();
+	const navigating = new Set();
 	const listeners = new Map();
 	const promises = new Map();
 
@@ -21,23 +22,48 @@
 	}
 	CustomError.prototype = new Error();
 
-	function init(windowToInit) {
-		listeners.set(windowToInit, {
-			load: [],
-			navigation: [],
-			unload: [],
-		});
+	function findWindow(target, mustBeEnabled) {
+		if (typeof(target) === 'string') {
+			const targetElement = document.getElementById(target);
+			if (targetElement !== null) {
+				const targetWindow = targetElement.contentWindow;
+				if (windows.has(targetWindow) || (!mustBeEnabled && listeners.has(targetWindow))) {
+					return targetWindow;
+				}
+			}
+		} else if (windows.has(target)) {
+			return target;
+		}
+		return undefined;
 	}
 
-	Unsandbox.addElement = function (id, loadListener) {
-		loadListeners.set(id, loadListener);
+	function init(windowToInit) {
+		windows.add(windowToInit);
+		if (!listeners.has(windowToInit)) {
+			listeners.set(windowToInit, {
+				load: [],
+				navigation: [],
+				unload: [],
+			});
+		}
+	}
+
+	Unsandbox.addElement = function (id) {
+		const elementToAdd = document.getElementById(id);
+		if (elementToAdd !== null && elementToAdd.contentWindow) {
+			init(elementToAdd.contentWindow);
+		} else {
+			throw new CustomError('UnknownWindow', id);
+		}
 	}
 
 	Unsandbox.removeElement = function (id) {
-		loadListeners.delete(id);
 		const element = document.getElementById(id);
+		const windowToRemove = element.contentWindow;
 		if (element !== null) {
-			listeners.delete(element.contentWindow);
+			windows.delete(windowToRemove);
+			navigating.delete(windowToRemove);
+			listeners.delete(windowToRemove);
 		}
 	}
 
@@ -50,14 +76,47 @@
 	}
 
 	Unsandbox.removeWindow = function (windowToRemove) {
+		windows.delete(windowToRemove);
+		navigating.delete(windowToRemove);
 		listeners.delete(windowToRemove);
 	}
 
-	Unsandbox.addEventListener = function (target, type, listener) {
-		if (typeof(target) === 'string') {
-			target = document.getElementById(target).contentWindow;
+	Unsandbox.navigate = function (target, urlString) {
+		let targetWindow = findWindow(target, false);
+		if (targetWindow === undefined) {
+			throw new CustomError('UnknownWindow', target);
 		}
-		listeners.get(target)[type].push(listener);
+
+		const thisURL = document.location;
+		const destinationURL = new URL(urlString, document.location.href);
+		const sameOrigin = thisURL.protocol === destinationURL.protocol && thisURL.host === destinationURL.host;
+
+		if (sameOrigin) {
+			windows.add(targetWindow);
+			navigating.add(targetWindow);
+		} else {
+			if (windows.has(targetWindow)) {
+				windows.delete(targetWindow);
+				const listenersToFire = listeners.get(targetWindow).unload;
+				for (const listener of listenersToFire) {
+					listener();
+				}
+			}
+		}
+		targetWindow.location.href = urlString;
+	}
+
+	Unsandbox.hasTarget = function (target) {
+		return findWindow(target, true) !== undefined;
+	}
+
+	Unsandbox.addEventListener = function (target, type, listener) {
+		const targetWindow = findWindow(target, false);
+		if (targetWindow !== undefined) {
+			listeners.get(targetWindow)[type].push(listener);
+		} else {
+			throw new CustomError('UnknownWindow', target);
+		}
 	}
 
 	function pendingPromise() {
@@ -76,26 +135,13 @@
 			throw new CustomError('BadArgs', 'operation', 'Operation not specified.');
 		}
 
-		let destination = undefined;
-		if (typeof(target) === 'string') {
-			const destinationElement = document.getElementById(target);
-			if (destinationElement !== null) {
-				const destinationWindow = destinationElement.contentWindow;
-				if (destinationWindow) {
-					if (listeners.has(destinationWindow)) {
-						destination = destinationWindow;
-					}
-				}
-			}
-		} else if (listeners.has(target)) {
-			destination = target;
-		}
+		const targetWindow = findWindow(target, true);
 
-		if (destination !== undefined) {
+		if (targetWindow !== undefined) {
 			requestID++;
 			command.requestID = requestID;
-			destination.postMessage(command, '*');
-			if (command.operation.slice(0, 3) === 'get') {
+			targetWindow.postMessage(command, '*');
+			if (/^(get|has)/.test(command.operation)) {
 				const promise = pendingPromise();
 				promises.set(requestID, promise);
 				return promise;
@@ -123,7 +169,7 @@
 
 		const source = event.source;
 
-		if (listeners.has(source)) {
+		if (windows.has(source)) {
 			let promise;
 			switch (eventType) {
 			case 'error':
@@ -139,25 +185,19 @@
 				}
 				break;
 			default:
-				const listenersToFire = listeners.get(source)[eventType];
-				if (eventType === 'unload') {
-					listeners.delete(source);
+				if (eventType === 'load') {
+					navigating.delete(source);
+				} else if (eventType === 'unload') {
+					if (navigating.has(source)) {
+						navigating.delete(source);
+						return;
+					} else {
+						windows.delete(source);
+					}
 				}
+				const listenersToFire = listeners.get(source)[eventType];
 				for (const listener of listenersToFire) {
 					listener(data.value);
-				}
-			}
-		} else if (eventType === 'load') {
-			for (const id of loadListeners.keys()) {
-				const element = document.getElementById(id);
-				if (element !== null && element.contentWindow === source) {
-					const listener = loadListeners.get(id);
-					init(element.contentWindow);
-					loadListeners.delete(id);
-					if (listener) {
-						listener();
-					}
-					break;
 				}
 			}
 		}

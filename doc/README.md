@@ -1,3 +1,14 @@
+# Parent Side Methods
+- [x] addElement
+- [x] removeElement
+- [x] addWindow
+- [x] removeWindow
+- [x] addEventListener
+- [ ] removeEventListener
+- [x] hasTarget
+- [x] navigate
+- [x] send
+
 # General Patterns
 - getXXX
 - getXXXs
@@ -34,7 +45,6 @@
 - [ ] incrementAttribute
 - [x] removeAttribute
 - [x] setAttribute
-- [ ] setBooleanAttribute
 - [x] toggleAttribute
 
 ## CSS
@@ -74,6 +84,7 @@ The `x = `... forms (except for `toggle`) can be applied to elements too. `x` is
 - [ ] mapUpdate	x = x.map(f)
 - [x] call		x(v)
 	- [ ] or	x(v, f)
+	- [ ] calling from the child to the parent
 - [ ] forEach	f(x)
 - [x] increment	x = x + v
 - [x] set		x = v
@@ -91,9 +102,9 @@ Query operations return promises.
 ## HTML
 - [ ] innerHTML
 - [ ] outerHTML
-- [ ] getAttribute
-- [ ] getBooleanAttribute
+- [x] getAttribute
 - [ ] getAttributes
+- [x] hasAttribute
 
 ## CSS
 - [ ] hasClass
@@ -147,9 +158,14 @@ These operate on a collection of matches.
 - NoSuchElement
 
 # URL Parameters
-- `allownavigation`: Fires ` navigation` and `load` events when clicking on a link to another page within the same site instead of `unload` events. The same-site protection can be circumvented by an attacker if they're able to inject code into the child window.
+## Parent-Side
+- [x] `allownavigation`: Fires `navigation` and `load` events when clicking on a link to another page within the same site instead of `unload` events. The same-site protection can be circumvented by an attacker if they're able to inject code into the child window. `unload` events can be suppressed if an attacker is able to load a customized version of the child window script in place of the proper one.
 	- [x] Works with hyperlinks
 	- [ ] Works with form submission
+
+## Child-Side
+- [x] `limitscript`: Limits requests without a selector to accessing the `Sandbox.remoteAccess` object rather than the `window` object.
+- [ ] `selectors` Requires the selectors used in requests to begin with one of a specified group of prefixes.
 
 # No Demo Supplied Yet
 - srcdoc

@@ -1,19 +1,18 @@
+Unsandbox.addElement('inner');
+
+Unsandbox.addEventListener('inner', 'load', function () {
+	console.log('Event: page loaded');
+});
+Unsandbox.addEventListener('inner', 'navigation', function (url) {
+	console.log('Event: navigating to ' + url);
+});
+Unsandbox.addEventListener('inner', 'unload', function () {
+	console.log('Event: unloaded');
+});
+
+Unsandbox.navigate('inner', 'iframe.html');
+
 const outputBox = document.getElementById('return-value');
-
-function addLogs() {
-	console.log('Event: page loaded, connection initialized');
-	Unsandbox.addEventListener('inner', 'load', function () {
-		console.log('Event: page loaded');
-	});
-	Unsandbox.addEventListener('inner', 'navigation', function (url) {
-		console.log('Event: navigating to ' + url);
-	});
-	Unsandbox.addEventListener('inner', 'unload', function () {
-		console.log('Event: unloaded');
-	});
-}
-
-Unsandbox.addElement('inner', addLogs);
 
 function sendAddClass() {
 	Unsandbox.send('inner', {
@@ -54,6 +53,16 @@ function sendGetAttribute() {
 	}).then (function (urls) {
 		outputBox.innerHTML = String(urls);
 	});
+}
+
+function sendHasAttribute() {
+	Unsandbox.send('inner', {
+		operation: 'hasAttribute',
+		selector: 'input[type=checkbox]',
+		name: 'checked',
+	}).then (function (checked) {
+		outputBox.innerHTML = String(checked);
+	});;
 }
 
 function sendIncrementHTML() {
@@ -146,6 +155,15 @@ function sendSetAttribute() {
 		selector: '#textbox',
 		name: 'value',
 		value: 'Parent document wrote this'
+	});
+}
+
+function sendSetBooleanAttribute() {
+	Unsandbox.send('inner', {
+		operation: 'setAttribute',
+		selector: 'input[type=checkbox]',
+		name: 'checked',
+		value: document.getElementById('boolean').checked,
 	});
 }
 

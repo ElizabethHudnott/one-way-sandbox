@@ -7,7 +7,7 @@
 	<script src="../src/page-modifier.js?allownavigation"></script>
 </head>
 <body>
-	<iframe id="inner" src="iframe.html"></iframe>
+	<iframe id="inner"></iframe>
 	<ul id="commands">
 		<li><button type="button" onclick="sendAddClass()">addClass</button></li>
 		<li><button type="button" onclick="sendAddScript()">addScript</button></li>
@@ -25,14 +25,20 @@
 		<li><button type="button" onclick="sendReplaceClass()">replaceClass</button></li>
 		<li><button type="button" onclick="sendSet()">set</button></li>
 		<li><button type="button" onclick="sendSetAttribute()">setAttribute</button></li>
+		<li><button type="button" onclick="sendSetBooleanAttribute()">setAttribute (boolean)</button></li>
 		<li><button type="button" onclick="sendSetStyle()">setStyle</button></li>
 		<li><button type="button" onclick="sendToggleHTML()">toggle HTML</button></li>
 		<li><button type="button" onclick="sendToggleJS()">toggle JS</button></li>
 		<li><button type="button" onclick="sendToggleAttribute()">toggleAttribute</button></li>
 		<li><button type="button" onclick="sendToggleClass()">toggleClass</button></li>
 		<li><button type="button" onclick="sendGetAttribute()">getAttribute</button></li>
+		<li><button type="button" onclick="sendHasAttribute()">hasAttribute</button></li>
 	</ul>
 	<div>
+		<label>
+			Boolean:
+			<input id="boolean" type="checkbox"/>
+		</label>
 		<label>
 			Argument:
 			<input id="arg" value="42"/>
