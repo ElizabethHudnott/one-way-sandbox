@@ -216,3 +216,12 @@ function sendToggleClass() {
 		name: 'lemon',
 	});
 }
+
+function sendUseClass() {
+	Unsandbox.send('inner', {
+		operation: 'useClass',
+		selector: 'body',
+		name: 'lemon',
+		value: document.getElementById('boolean').checked,
+	});
+}

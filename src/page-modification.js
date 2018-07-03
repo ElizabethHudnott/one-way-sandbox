@@ -243,6 +243,9 @@ loop:		for (const element of elements) {
 				case 'toggleClass':
 					element.classList.toggle(name);
 					break;
+				case 'useClass':
+					element.classList.toggle(name, value);
+					break;
 				default:
 					sendError('BadArgs', 'Unknown operation ' + operation);
 					break loop;

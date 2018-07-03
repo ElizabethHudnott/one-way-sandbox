@@ -53,7 +53,7 @@
 - [x] removeClass
 - [x] replaceClass
 - [x] toggleClass
-- [ ] useClass
+- [x] useClass
 
 ### style Attribute
 Sets Element.style.xxx
@@ -64,7 +64,7 @@ Sets Element.style.xxx
 ### Style Sheets
 - [ ] addStyleSheet
 - [ ] removeStyleSheet
-- [ ] toggleStyleSheet (toggles disabled attribute)
+- [ ] toggleStyleSheet (toggles `disabled` attribute)
 - [ ] useStyleSheet
 
 ### Declarations Inside a Style Sheet
