@@ -177,7 +177,11 @@ loop:		for (const element of elements) {
 					}
 					break;
 				case 'outerHTML':
-					element.outerHTML = value;
+					if ('value' in modification) {
+						element.outerHTML = String(value);
+					} else {
+						returnValues.push(element.outerHTML);
+					}
 					break;
 				case 'remove':
 					element.parentNode.removeChild(element);

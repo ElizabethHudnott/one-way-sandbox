@@ -98,11 +98,20 @@ function sendGetInnerHTML() {
 	});
 }
 
-function sendOuterHTML() {
+function sendSetOuterHTML() {
 	Unsandbox.send('inner', {
 		operation: 'outerHTML',
 		selector: 'h1',
 		value: '<ins><h2>This h2 Was Formerly a h1.</h2></ins>'
+	});
+}
+
+function sendGetOuterHTML() {
+	Unsandbox.send('inner', {
+		operation: 'outerHTML',
+		selector: 'ul',
+	}).then(function (html) {
+		outputBox.innerText = String(html);
 	});
 }
 

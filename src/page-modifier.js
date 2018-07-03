@@ -143,7 +143,7 @@
 			command.requestID = requestID;
 			targetWindow.postMessage(command, '*');
 			if (/^(get|has)/.test(operation) ||
-				(!('value' in command) && /^(innerHTML)$/.test(operation))
+				(!('value' in command) && /^(innerHTML|outerHTML)$/.test(operation))
 			) {
 				const promise = pendingPromise();
 				promises.set(requestID, promise);
