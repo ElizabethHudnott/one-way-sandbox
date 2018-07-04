@@ -117,7 +117,6 @@ All operations return promises, which is used to obtain the result of a query.
 
 ## JavaScript
 ### General
-These operate on the first match only.
 - [ ] calc	x(v) or x(v, f)
 - [ ] constructorName
 - [ ] get
@@ -141,6 +140,7 @@ These operate on a collection of matches.
 # Properties of a Request Object
 - [x] operation
 - [x] selector
+- [x] firstMatch (`true`, `false` or absent, for restricting changes or queries to the first matching element only)
 - [x] name (list of dot separated or square bracketed JS property names (without quotes))
 - [x] value or args
 - [ ] func
@@ -159,7 +159,7 @@ These operate on a collection of matches.
 
 # URL Parameters
 ## Parent-Side
-- [x] `allownavigation`: Fires `navigation` and `load` events when clicking on a link to another page within the same site instead of `unload` events. The same-site protection can easily be circumvented by an attacker if they're able to inject code into the child window. `unload` events can be suppressed if an attacker is able to load a customized version of the child window script in place of the proper one. Thus, `allownavigation` is higher risk but higher convenience but neither option is zero risk.
+- [x] `allownavigation`: Fires `navigation` and `load` events when clicking on a link to another page within the same site instead of `unload` events. The same-site protection can easily be circumvented by an attacker if they're able to inject code into the child window. `unload` events can be suppressed if an attacker is able to load a customized version of the child window script in place of the proper one. Thus, `allownavigation` is higher risk but higher convenience but neither option is zero risk. A a Content Security Policy (CSP) can help to mitigate these risks.
 	- [x] Works with hyperlinks
 	- [ ] Works with form submission
 

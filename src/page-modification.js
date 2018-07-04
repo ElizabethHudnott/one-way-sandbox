@@ -142,7 +142,16 @@
 			if (selector === undefined) {
 				elements = paramLimitScript? [Unsandbox.remoteAccess] : [window];
 			} else if (typeof(selector) === 'string') {
-				elements = document.querySelectorAll(selector);
+				if (modification.firstMatch) {
+					let element = document.querySelector(selector);
+					if (element === null) {
+						elements = [];
+					} else {
+						elements = [element];
+					}
+				} else {
+					elements = document.querySelectorAll(selector);
+				}
 			} else {
 				let depth = 0;
 				let element = document.documentElement;
