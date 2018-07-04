@@ -1,4 +1,4 @@
-input[type=text] {
+input[type=text]:not([size]) {
 	width: 300px;
 }
 

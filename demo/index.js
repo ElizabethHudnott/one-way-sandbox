@@ -81,6 +81,23 @@ function sendIncrementJS() {
 	});
 }
 
+function sendIncrementAttribute() {
+	Unsandbox.send('inner', {
+		operation: 'incrementAttribute',
+		selector: '#number',
+		name: 'value',
+	});
+}
+
+function sendIncrementStyle() {
+	Unsandbox.send('inner', {
+		operation: 'incrementStyle',
+		selector: 'div',
+		name: 'margin',
+		value: 2,
+	});
+}
+
 function sendSetInnerHTML() {
 	Unsandbox.send('inner', {
 		operation: 'innerHTML',
@@ -131,7 +148,7 @@ function sendRemove() {
 function sendRemoveAttribute() {
 	Unsandbox.send('inner', {
 		operation: 'removeAttribute',
-		selector: 'input',
+		selector: 'input[type=checkbox]',
 		name: 'disabled'
 	});
 }

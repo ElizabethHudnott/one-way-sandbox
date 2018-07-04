@@ -42,7 +42,7 @@
 - [ ] MathJax support
 
 ### Element Attributes
-- [ ] incrementAttribute
+- [x] incrementAttribute
 - [x] removeAttribute
 - [x] setAttribute
 - [x] toggleAttribute
@@ -57,7 +57,7 @@
 
 ### style Attribute
 Sets Element.style.xxx
-- [ ] incrementStyle
+- [x] incrementStyle
 - [x] removeStyle
 - [x] setStyle
 
@@ -101,7 +101,7 @@ All operations return promises, which is used to obtain the result of a query.
 
 ## HTML
 - [x] innerHTML
-- [ ] outerHTML
+- [x] outerHTML
 - [x] getAttribute
 - [ ] getAttributes
 - [x] hasAttribute

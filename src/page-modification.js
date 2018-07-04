@@ -15,24 +15,47 @@
 		}
 
 		function findObject(name, begin) {
-			let obj = begin;
-			const names = [];
-			const accessorRE = /(?:(?:^|\.)([a-z_$][\w$]*))|(?:\[([^\]]*)])/giy;
+			let prevObj, lastName;
 			if (name !== undefined) {
+				const accessorRE = /(?:(?:^|\.)([a-z_$][\w$]*))|(?:\[([^\]]*)])/giy;
+				let obj = begin;
 				let match;
 				while ((match = accessorRE.exec(name)) !== null) {
-					if (match[1] !== undefined) {
-						names.push(match[1]);
-					} else {
-						names.push(match[2]);
+					prevObj = obj;
+					if (typeof(prevObj) !== 'object') {
+//TODO throw an error
 					}
+					if (match[1] !== undefined) {
+						lastName = match[1];
+					} else {
+						lastName = match[2];
+					}
+					obj = obj[lastName];
 				}
-				for (let i = 0; i < names.length - 1; i++) {
-					obj = obj[names[i]];
-				}
-				const lastName = names[names.length - 1];
-				return [obj, lastName];
 			}
+			if (lastName === undefined) {
+//TODO throw an error
+			} else {
+				return [prevObj, lastName];
+			}
+		}
+
+		function increment(str, amount) {
+			if (amount === undefined) {
+				amount = 1;
+			}
+			let number, units;
+			if (str) {
+				number = parseFloat(str);
+				if (Number.isNaN(number)) {
+					number = 0;
+				}
+				units = str.match(/[a-zA-Z%]*$/)[0];
+			} else {
+				number = 0;
+				units = '';
+			}
+			return String(number + parseFloat(amount)) + units;
 		}
 
 		/*	Converts a string into a live list of nodes.
@@ -160,14 +183,27 @@ loop:		for (const element of elements) {
 					returnValues.push(element.hasAttribute(name));
 					break;
 				case 'increment':
-					const amount = value === undefined? 1 : value;
 					if (name === undefined) {
-						let value = parseFloat(element.innerHTML) + amount;
-						element.innerHTML = value;
+						element.innerHTML = increment(element.innerHTML, value);
 					} else {
+						const amount = value === undefined? 1 : parseFloat(value);
 						[obj, jsPropertyName] = findObject(name, element);
 						obj[jsPropertyName] = obj[jsPropertyName] + amount;
 					}
+					break;
+				case 'incrementAttribute':
+					element.setAttribute(name, increment(element.getAttribute(name), value));
+					break;
+				case 'incrementStyle':
+					let currentValue = element.style.getPropertyValue(name);
+					if (!currentValue) {
+						currentValue = getComputedStyle(element).getPropertyValue(name);
+					}
+					element.style.setProperty(
+						name,
+						increment(currentValue, value),
+						element.style.getPropertyPriority(name)
+					);
 					break;
 				case 'innerHTML':
 					if ('value' in modification) {
@@ -222,7 +258,8 @@ loop:		for (const element of elements) {
 					document.close();
 					break;
 				case 'setStyle':
-					element.style.setProperty(name, value);
+					let match = String(value).match(/^(.*?)(?:!\s*(important)\s*)?$/);
+					element.style.setProperty(name, match[1], match[2]);
 					break;
 				case 'toggle':
 					if (name === undefined) {
