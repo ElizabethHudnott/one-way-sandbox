@@ -19,14 +19,12 @@
 - useXXX (Boolean argument, enables or disables the item)
 
 # Operations for Making Changes
+- [ ] Extend the ability to use functions to include nearly all of these operations.
+
 ## HTML
 ### Elements
 - [x] innerHTML
 - [x] outerHTML
-- [ ] addEventListenerThere
-- [ ] removeEventListenerThere
-- [ ] addEventListenerHere
-- [ ] removeEventListenerHere
 - [x] append
 - [ ] filterUpdate
 - [ ] insertBefore
@@ -77,8 +75,10 @@ Sets Element.style.xxx
 
 ## JavaScript
 The `x = `... forms (except for `toggle`) can be applied to elements too. `x` is considered to be the `innerHTML` of the element in this case.
-- [ ] addEventListener
-- [ ] removeEventListener
+- [ ] addEventListenerThere
+- [ ] removeEventListenerThere
+- [ ] addEventListenerHere
+- [ ] removeEventListenerHere
 - [x] addScript (append a `<script>` tag)
 - [ ] update	x = f(x, v)
 - [ ] methodUpdate	x = x.f(v)
@@ -90,8 +90,7 @@ The `x = `... forms (except for `toggle`) can be applied to elements too. `x` is
 - [ ] forEach	f(x)
 - [x] increment	x = x + v
 - [x] set		x = v
-	- [ ] or	x = f(v)
-	- [ ] applied to elements
+	- [x] or	x = f(v)
 - [x] toggle	x = !x
 
 ## Miscellaneous

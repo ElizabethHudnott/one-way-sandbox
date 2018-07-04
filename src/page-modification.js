@@ -7,7 +7,7 @@
 		const msgTarget = window.location.protocol === 'file:'? '*' : origin;
 		const myURL = document.currentScript.src;
 		const urlParams = new URLSearchParams(myURL.indexOf('?') !== -1? myURL.slice(myURL.indexOf('?')) : '');
-		const paramLimitScript= /^(true|1)?$/i.test(urlParams.get('limitscript'));
+		const paramLimitScript = /^(true|1)?$/i.test(urlParams.get('limitscript'));
 
 		if (!('Unsandbox' in window)) {
 			window.Unsandbox = {};
@@ -106,6 +106,7 @@
 			const firstMatch = modification.firstMatch;
 			const name = modification.name;
 			const value = modification.value;
+			const func = modification.func;
 			const args = modification.args;
 			const requestID = modification.requestID;
 			let elements;
@@ -124,6 +125,13 @@
 			}
 			event.stopImmediatePropagation();
 
+			const rootObject = paramLimitScript? Unsandbox.remoteAccess : window;
+
+			let funcParent, funcName;
+			if (func !== undefined) {
+				[funcParent, funcName] = findObject(func, rootObject);
+			}
+
 			switch (operation) {
 			case 'addScript':
 				let element = document.createElement('script');
@@ -141,7 +149,7 @@
 			}
 
 			if (selector === undefined) {
-				elements = paramLimitScript? [Unsandbox.remoteAccess] : [window];
+				elements = [rootObject];
 			} else if (typeof(selector) === 'string') {
 				if (firstMatch) {
 					let element = document.querySelector(selector);
@@ -269,7 +277,11 @@ loop:		for (const element of elements) {
 					break;
 				case 'set':
 					[obj, jsPropertyName] = findObject(name, element);
-					obj[jsPropertyName] = value;
+					if (func === undefined) {
+						obj[jsPropertyName] = value;
+					} else {
+						obj[jsPropertyName] = funcParent[funcName].apply(funcParent, args);
+					}
 					break;
 				case 'setAttribute':
 					if (value === true) {

@@ -196,6 +196,15 @@ function sendSet() {
 	});
 }
 
+function sendSetFx() {
+	Unsandbox.send('inner', {
+		operation: 'set',
+		name: 'x',
+		func: 'timesTwo',
+		args: [10]
+	});
+}
+
 function sendSetAttribute() {
 	Unsandbox.send('inner', {
 		operation: 'setAttribute',

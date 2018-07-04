@@ -5,6 +5,10 @@ function f(a) {
 	document.body.appendChild(nodes[0]);
 }
 
+function timesTwo(a) {
+	return a * 2;
+}
+
 document.getElementById('show-x-button').addEventListener('click', function (event) {
 	document.getElementById('scratch').innerHTML = x;
 });
