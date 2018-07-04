@@ -106,8 +106,12 @@
 			const firstMatch = modification.firstMatch;
 			const name = modification.name;
 			const value = modification.value;
-			const func = modification.func;
-			const args = modification.args;
+			const qualifiedFuncName = modification.func;
+			const args = 'args' in modification? modification.args : [];
+			const perMatch = modification.perMatch;
+			if (perMatch) {
+				args.push(null);
+			}
 			const requestID = modification.requestID;
 			let elements;
 
@@ -118,7 +122,7 @@
 				sendError('BadArgs', 'Missing selector or attribute name.', requestID);
 				return;
 			}
-			if (args !== undefined && !Array.isArray(args)) {
+			if (!Array.isArray(args)) {
 				//Throws an incomprehensible error message otherwise.
 				sendError('BadArgs', 'args must be an array.', requestID);
 				return;
@@ -127,10 +131,17 @@
 
 			const rootObject = paramLimitScript? Unsandbox.remoteAccess : window;
 
-			let funcParent, funcName;
-			if (func !== undefined) {
-				[funcParent, funcName] = findObject(func, rootObject);
+			let func, applyFunc;
+			if (qualifiedFuncName !== undefined) {
+				const [funcParent, funcName] = findObject(qualifiedFuncName, rootObject);
+				func = funcParent[funcName];
+				applyFunc = function (argsToUse) {
+					return func.apply(funcParent, argsToUse);
+				}
 			}
+			const finalValue = func === undefined? value : applyFunc(args);
+
+			let charIndex, obj, jsPropertyName;
 
 			switch (operation) {
 			case 'addScript':
@@ -145,6 +156,16 @@
 			case 'reload':
 				window.removeEventListener('beforeunload', beforeUnload);
 				window.location.reload();
+				return;
+			case 'srcdoc':
+				window.removeEventListener('beforeunload', beforeUnload);
+				charIndex = finalValue.lastIndexOf('</body>');
+				if (charIndex === -1) {
+					document.writeln(finalValue + '<script src="' + myURL + '"></script>');
+				} else {
+					document.writeln(finalValue.slice(0, charIndex) + '<script src="' + myURL + '"></script></body></html>');
+				}
+				document.close();
 				return;
 			}
 
@@ -196,16 +217,18 @@
 				}
 			}
 
-			let charIndex, obj, jsPropertyName;
 			let returnValues = [];
 
 loop:		for (const element of elements) {
+				if (perMatch) {
+					args[args.length - 1] = element;
+				}
 				switch (operation) {
 				case 'addClass':
 					element.classList.add(name);
 					break;
 				case 'append':
-					let newNodes = Unsandbox.htmlToNodes(value);
+					let newNodes = Unsandbox.htmlToNodes(finalValue);
 					while (newNodes.length > 0) {
 						element.appendChild(newNodes[0]);
 					}
@@ -225,15 +248,15 @@ loop:		for (const element of elements) {
 					break;
 				case 'increment':
 					if (name === undefined) {
-						element.innerHTML = increment(element.innerHTML, value);
+						element.innerHTML = increment(element.innerHTML, finalValue);
 					} else {
-						const amount = value === undefined? 1 : parseFloat(value);
+						const amount = (value === undefined && func === undefined)? 1 : parseFloat(finalValue);
 						[obj, jsPropertyName] = findObject(name, element);
 						obj[jsPropertyName] = obj[jsPropertyName] + amount;
 					}
 					break;
 				case 'incrementAttribute':
-					element.setAttribute(name, increment(element.getAttribute(name), value));
+					element.setAttribute(name, increment(element.getAttribute(name), finalValue));
 					break;
 				case 'incrementStyle':
 					let currentValue = element.style.getPropertyValue(name);
@@ -242,20 +265,20 @@ loop:		for (const element of elements) {
 					}
 					element.style.setProperty(
 						name,
-						increment(currentValue, value),
+						increment(currentValue, finalValue),
 						element.style.getPropertyPriority(name)
 					);
 					break;
 				case 'innerHTML':
 					if ('value' in modification) {
-						element.innerHTML = String(value);
+						element.innerHTML = String(finalValue);
 					} else {
 						returnValues.push(element.innerHTML);
 					}
 					break;
 				case 'outerHTML':
 					if ('value' in modification) {
-						element.outerHTML = String(value);
+						element.outerHTML = String(finalValue);
 					} else {
 						returnValues.push(element.outerHTML);
 					}
@@ -273,15 +296,11 @@ loop:		for (const element of elements) {
 					element.style.removeProperty(name);
 					break;
 				case 'replaceClass':
-					element.classList.replace(name, value);
+					element.classList.replace(name, finalValue);
 					break;
 				case 'set':
 					[obj, jsPropertyName] = findObject(name, element);
-					if (func === undefined) {
-						obj[jsPropertyName] = value;
-					} else {
-						obj[jsPropertyName] = funcParent[funcName].apply(funcParent, args);
-					}
+					obj[jsPropertyName] = finalValue;
 					break;
 				case 'setAttribute':
 					if (value === true) {
@@ -289,21 +308,11 @@ loop:		for (const element of elements) {
 					} else if (value === false) {
 						element.removeAttribute(name);
 					} else {
-						element.setAttribute(name, value);
+						element.setAttribute(name, finalValue);
 					}
-					break;
-				case 'srcdoc':
-					window.removeEventListener('beforeunload', beforeUnload);
-					charIndex = value.lastIndexOf('</body>');
-					if (charIndex === -1) {
-						document.writeln(value + '<script src="' + myURL + '"></script>');
-					} else {
-						document.writeln(value.slice(0, charIndex) + '<script src="' + myURL + '"></script></body></html>');
-					}
-					document.close();
 					break;
 				case 'setStyle':
-					let match = String(value).match(/^(.*?)(?:!\s*(important)\s*)?$/);
+					let match = String(finalValue).match(/^(.*?)(?:!\s*(important)\s*)?$/);
 					element.style.setProperty(name, match[1], match[2]);
 					break;
 				case 'toggle':
@@ -330,7 +339,7 @@ loop:		for (const element of elements) {
 					element.classList.toggle(name);
 					break;
 				case 'useClass':
-					element.classList.toggle(name, value);
+					element.classList.toggle(name, finalValue);
 					break;
 				default:
 					sendError('BadArgs', 'Unknown operation ' + operation);

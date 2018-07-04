@@ -20,6 +20,8 @@
 
 # Operations for Making Changes
 - [ ] Extend the ability to use functions to include nearly all of these operations.
+	- [x] in the `value` position
+	- [ ] in the `name` position (where `value` isn't relevant)
 
 ## HTML
 ### Elements
@@ -146,6 +148,7 @@ These operate on a collection of matches.
 - [x] name (list of dot separated or square bracketed JS property names (without quotes))
 - [x] value or args
 - [ ] func
+- [ ] perMatch (`true` if func needs to be re-evaluated for each element, thus f(v, e) rather than f(v) )
 - [ ] mathJax (true/false if new content needs MathJax parsing)
 - [x] integrity (addScript and addStyleSheet only)
 - [ ] id (addStyleSheet only)
