@@ -67,6 +67,16 @@ function sendHasAttribute() {
 	});;
 }
 
+function sendHasClass() {
+	Unsandbox.send('inner', {
+		operation: 'hasClass',
+		selector: 'body',
+		name: 'lemon',
+	}).then (function (result) {
+		outputBox.innerText = String(result);
+	});;
+}
+
 function sendIncrementHTML() {
 	Unsandbox.send('inner', {
 		operation: 'increment',

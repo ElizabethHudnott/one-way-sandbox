@@ -209,6 +209,9 @@ loop:		for (const element of elements) {
 				case 'getAttribute':
 					returnValues.push(element.getAttribute(name));
 					break;
+				case 'hasClass':
+					returnValues.push(element.classList.contains(name));
+					break;
 				case 'hasAttribute':
 					returnValues.push(element.hasAttribute(name));
 					break;

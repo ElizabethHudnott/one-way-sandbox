@@ -109,7 +109,7 @@ All operations return promises, which is used to obtain the result of a query.
 - [x] hasAttribute
 
 ## CSS
-- [ ] hasClass
+- [x] hasClass
 - [ ] getClasses
 - [ ] getComputedStyle
 - [ ] getStyle
