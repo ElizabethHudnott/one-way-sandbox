@@ -103,6 +103,7 @@
 
 			const operation = modification.operation;
 			const selector = modification.selector;
+			const firstMatch = modification.firstMatch;
 			const name = modification.name;
 			const value = modification.value;
 			const args = modification.args;
@@ -142,7 +143,7 @@
 			if (selector === undefined) {
 				elements = paramLimitScript? [Unsandbox.remoteAccess] : [window];
 			} else if (typeof(selector) === 'string') {
-				if (modification.firstMatch) {
+				if (firstMatch) {
 					let element = document.querySelector(selector);
 					if (element === null) {
 						elements = [];
@@ -153,18 +154,38 @@
 					elements = document.querySelectorAll(selector);
 				}
 			} else {
-				let depth = 0;
-				let element = document.documentElement;
-				for (const index of selector) {
-					let children = element.children;
-					if (index >= children.length) {
-						sendError('NoSuchElement', 'Insufficient number of child nodes at depth ' + depth + ' in path ' + selector);
-						return;
+				elements = [document.documentElement];
+				const numberOfSubselectors = selector.length;
+				for (let depth = 0; depth < numberOfSubselectors; depth++) {
+					const subselector = selector[depth];
+					let newElements = [];
+					for (const element of elements) {
+						if (typeof(subselector) === 'number') {
+							const children = element.children;
+							const numChildren = children.length;
+							if (subselector < 0 && subselector >= -numChildren) {
+								newElements.push(children[numChildren + subselector]);
+							} else if (subselector < numChildren) {
+								newElements.push(children[subselector]);
+							} else if (elements.length === 1) {
+								console.warn('Insufficient number of child nodes at depth ' + depth + ' in path ' + selector);
+							}
+						} else {
+							if (firstMatch && depth === numberOfSubselectors - 1) {
+								const newElement = element.querySelector(subselector);
+								if (newElement !== null) {
+									newElements.push(newElement);
+								}
+							} else {
+								newElements = newElements.concat(Array.from(element.querySelectorAll(subselector)));
+							}
+						}
 					}
-					element = children[index];
-					depth++;
+					elements = newElements;
 				}
-				elements = [element];
+				if (firstMatch && elements.length > 1) {
+					elements = [elements[0]];
+				}
 			}
 
 			let charIndex, obj, jsPropertyName;

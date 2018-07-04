@@ -23,8 +23,10 @@
 ### Elements
 - [x] innerHTML
 - [x] outerHTML
-- [ ] addEventListener
-- [ ] removeEventListener
+- [ ] addEventListenerThere
+- [ ] removeEventListenerThere
+- [ ] addEventListenerHere
+- [ ] removeEventListenerHere
 - [x] append
 - [ ] filterUpdate
 - [ ] insertBefore
@@ -136,6 +138,7 @@ These operate on a collection of matches.
 # Possible Targets
 - [x] Array of child indices
 - [x] CSS selector
+- [x] Mixed array of numeric indices and CSS selectors
 
 # Properties of a Request Object
 - [x] operation
@@ -155,7 +158,6 @@ These operate on a collection of matches.
 
 # Error Types
 - BadArgs
-- NoSuchElement
 
 # URL Parameters
 ## Parent-Side
