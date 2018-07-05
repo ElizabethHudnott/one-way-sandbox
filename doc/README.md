@@ -147,19 +147,24 @@ These operate on a collection of matches.
 - [x] firstMatch (`true`, `false` or absent, for restricting changes or queries to the first matching element only)
 - [x] name (list of dot separated or square bracketed JS property names (without quotes))
 - [x] value or args
-- [ ] func
-- [ ] perMatch (`true` if func needs to be re-evaluated for each element, thus f(v, e) rather than f(v) )
+- [x] func
+- [x] perMatch (`true` if func needs to be re-evaluated for each element, thus f(v, e) rather than f(v) )
 - [ ] mathJax (true/false if new content needs MathJax parsing)
 - [x] integrity (addScript and addStyleSheet only)
 - [ ] id (addStyleSheet only)
 
 # Events
+- [x] error
 - [x] load
 - [x] navigation
 - [x] unload
 
 # Error Types
+## Passed from Child to Parent
 - BadArgs
+
+## Originating on the Parent Side
+- UnknownWindow
 
 # URL Parameters
 ## Parent-Side

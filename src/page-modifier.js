@@ -47,7 +47,6 @@
 				error: [],
 				load: [],
 				navigation: [],
-				return: [],
 				unload: [],
 			});
 		}
@@ -224,8 +223,10 @@
 				break;
 			}
 			const listenersToFire = listeners.get(source)[eventType];
-			for (const listener of listenersToFire) {
-				listener(data.value);
+			if (listenersToFire !== undefined) {
+				for (const listener of listenersToFire) {
+					listener(data.value);
+				}
 			}
 		}
 	});
