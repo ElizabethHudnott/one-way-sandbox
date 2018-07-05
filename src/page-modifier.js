@@ -8,7 +8,10 @@
 	const urlParams = new URLSearchParams(myURL.indexOf('?') !== -1? myURL.slice(myURL.indexOf('?')) : '');
 	const paramAllowNavigation = /^(true|1)?$/i.test(urlParams.get('allownavigation'));
 
+	//The windows currently enabled for sending events to.
 	const windows = new Set();
+	//The windows
+	const frameWindows = new Set();
 	const navigating = new Set();
 	const listeners = new Map();
 	const promises = new Map();
@@ -48,10 +51,22 @@
 		}
 	}
 
+	function onload(event) {
+		const targetWindow = event.target.contentWindow;
+		if (navigating.has(targetWindow)) {
+			navigating.delete(targetWindow);
+		} else {
+			windows.delete(targetWindow);
+		}
+	}
+
 	Unsandbox.addElement = function (id) {
 		const elementToAdd = document.getElementById(id);
 		if (elementToAdd !== null && elementToAdd.contentWindow) {
-			init(elementToAdd.contentWindow);
+			elementToAdd.addEventListener('load', onload);
+			const windowToAdd = elementToAdd.contentWindow;
+			frameWindows.add(windowToAdd)
+			init(windowToAdd);
 		} else {
 			throw new CustomError('UnknownWindow', id);
 		}
@@ -61,7 +76,9 @@
 		const element = document.getElementById(id);
 		const windowToRemove = element.contentWindow;
 		if (element !== null) {
+			element.removeEventListener('load', onload);
 			windows.delete(windowToRemove);
+			frameWindows.delete(windowToRemove);
 			navigating.delete(windowToRemove);
 			listeners.delete(windowToRemove);
 		}
@@ -97,6 +114,7 @@
 		} else {
 			if (windows.has(targetWindow)) {
 				windows.delete(targetWindow);
+				navigating.delete(targetWindow);
 				const listenersToFire = listeners.get(targetWindow).unload;
 				for (const listener of listenersToFire) {
 					listener();
@@ -181,27 +199,31 @@
 					promise.onreject(new CustomError(data.errorName, undefined, data.value));
 				}
 				break;
+			case 'load':
+				if (!frameWindows.has(source)) {
+					navigating.delete(source);
+				}
+				break;
+			case 'navigation':
+				navigating.add(source);
+				break;
 			case 'return':
 				promise = promises.get(data.requestID);
 				if (promise !== undefined) {
 					promise.onresolve(data.value);
 				}
 				break;
-			default:
-				if (eventType === 'load') {
-					navigating.delete(source);
-				} else if (eventType === 'unload') {
-					if (navigating.has(source)) {
-						navigating.delete(source);
-						return;
-					} else {
-						windows.delete(source);
-					}
+			case 'unload':
+				if (navigating.has(source)) {
+					return;
+				} else {
+					windows.delete(source);
 				}
-				const listenersToFire = listeners.get(source)[eventType];
-				for (const listener of listenersToFire) {
-					listener(data.value);
-				}
+				break;
+			}
+			const listenersToFire = listeners.get(source)[eventType];
+			for (const listener of listenersToFire) {
+				listener(data.value);
 			}
 		}
 	});

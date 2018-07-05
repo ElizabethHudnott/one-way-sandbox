@@ -163,7 +163,7 @@ These operate on a collection of matches.
 
 # URL Parameters
 ## Parent-Side
-- [x] `allownavigation`: Fires `navigation` and `load` events when clicking on a link to another page within the same site instead of `unload` events. The same-site protection can easily be circumvented by an attacker if they're able to inject code into the child window. `unload` events can be suppressed if an attacker is able to load a customized version of the child window script in place of the proper one. Thus, `allownavigation` is higher risk but higher convenience but neither option is zero risk. A a Content Security Policy (CSP) can help to mitigate these risks.
+- [x] `allownavigation`: Fires `navigation` and `load` events when clicking on a link to another page within the same site instead of `unload` events. The same-site protection can easily be circumvented by an attacker if they're able to inject code into the child window.
 	- [x] Works with hyperlinks
 	- [ ] Works with form submission
 
