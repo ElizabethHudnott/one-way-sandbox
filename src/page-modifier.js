@@ -44,8 +44,10 @@
 		windows.add(windowToInit);
 		if (!listeners.has(windowToInit)) {
 			listeners.set(windowToInit, {
+				error: [],
 				load: [],
 				navigation: [],
+				return: [],
 				unload: [],
 			});
 		}
