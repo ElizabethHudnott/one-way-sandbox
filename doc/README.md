@@ -21,7 +21,7 @@
 # Operations for Making Changes
 - [ ] Extend the ability to use functions to include nearly all of these operations.
 	- [x] in the `value` position
-	- [ ] in the `name` position (where `value` isn't relevant)
+	- [ ] in the `name` position (when `value` isn't relevant)
 
 ## HTML
 ### Elements
@@ -35,8 +35,8 @@
 - [ ] prepend
 - [x] remove
 - [ ] scrollIntoView
-- [ ] hide
-- [ ] show (with optional `true` or `false` argument)
+- [x] hide
+- [x] show (with optional `true` or `false` argument)
 - [x] toggle
 - [ ] update
 - [ ] wrap (like jQuery)

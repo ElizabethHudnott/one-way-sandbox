@@ -217,7 +217,7 @@
 				}
 			}
 
-			let returnValues = [];
+			let returnValues = [], show;
 
 loop:		for (const element of elements) {
 				if (perMatch) {
@@ -315,15 +315,39 @@ loop:		for (const element of elements) {
 					let match = String(finalValue).match(/^(.*?)(?:!\s*(important)\s*)?$/);
 					element.style.setProperty(name, match[1], match[2]);
 					break;
+				case 'hide':
+					show = false;
+					// fall through
+				case 'show':
+					if (show === undefined) {
+						show = !('value' in modification) || finalValue;
+					}
+					// fall through
 				case 'toggle':
 					if (name === undefined) {
-						const display = getComputedStyle(element).getPropertyValue('display');
-						if (display === 'none') {
-							element.style.display = null;
+						const computedStyle = getComputedStyle(element);
+						if (show === undefined) {
+							show = computedStyle.getPropertyValue('display') === 'none';
+						}
+						const displayStyle = element.style.display;
+						if (show) {
+							//Show element
+							if (displayStyle === '' || displayStyle === 'none') {
+								element.style.display = element.getAttribute('data-x-unsandbox-display');
+							}
+							element.removeAttribute('data-x-unsandbox-display')
+							if (computedStyle.getPropertyValue('display') === 'none') {
+								element.style.display = 'initial';
+							}
 						} else {
+							//Hide element
+							if (displayStyle !== '' && displayStyle !== 'none') {
+								element.setAttribute('data-x-unsandbox-display', displayStyle);
+							}
 							element.style.display = 'none';
 						}
 					} else {
+						// Toggle JS boolean variable
 						[obj, jsPropertyName] = findObject(name, element);
 						obj[jsPropertyName] = !obj[jsPropertyName];
 					}

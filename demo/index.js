@@ -14,6 +14,7 @@ Unsandbox.addEventListener('inner', 'unload', function () {
 
 Unsandbox.navigate('inner', 'iframe.html');
 
+const booleanInput = document.getElementById('boolean');
 const outputBox = document.getElementById('return-value');
 
 function sendAddClass() {
@@ -75,6 +76,13 @@ function sendHasClass() {
 	}).then (function (result) {
 		outputBox.innerText = String(result);
 	});;
+}
+
+function sendHide() {
+	Unsandbox.send('inner', {
+		operation: 'hide',
+		selector: '#links',
+	});
 }
 
 function sendIncrementHTML() {
@@ -219,7 +227,7 @@ function sendSetBooleanAttribute() {
 		operation: 'setAttribute',
 		selector: 'input[type=checkbox]',
 		name: 'checked',
-		value: document.getElementById('boolean').checked,
+		value: booleanInput.checked,
 	});
 }
 
@@ -229,6 +237,21 @@ function sendSetStyle() {
 		selector: 'body',
 		name: 'background-color',
 		value: 'lavender',
+	});
+}
+
+function sendShow() {
+	Unsandbox.send('inner', {
+		operation: 'show',
+		selector: '#links',
+	});
+}
+
+function sendShowBool() {
+	Unsandbox.send('inner', {
+		operation: 'show',
+		selector: '#links',
+		value: booleanInput.checked,
 	});
 }
 
@@ -267,6 +290,6 @@ function sendUseClass() {
 		operation: 'useClass',
 		selector: 'body',
 		name: 'lemon',
-		value: document.getElementById('boolean').checked,
+		value: booleanInput.checked,
 	});
 }
