@@ -92,7 +92,8 @@
 		}
 
 		function modifyPage(event) {
-			if (event.source !== parentWindow) {
+			const source = event.source;
+			if (source !== parentWindow && source !== window) {
 				return;
 			}
 
@@ -389,7 +390,11 @@ loop:		for (let i = 0; i < elements.length; i++) {
 			}
 
 			if (returnValues.length > 0 || elements.length === 0) {
-				parentWindow.postMessage({eventType: 'return', requestID: requestID, value: returnValues}, msgTarget);
+				if (source === window) {
+					return returnValues;
+				} else {
+					parentWindow.postMessage({eventType: 'return', requestID: requestID, value: returnValues}, msgTarget);
+				}
 			}
 		}
 
@@ -416,7 +421,7 @@ loop:		for (let i = 0; i < elements.length; i++) {
 		}
 
 		Unsandbox.do = function (command) {
-			modifyPage({data: command, source: parentWindow});
+			return modifyPage({data: command, source: window});
 		}
 
 	}

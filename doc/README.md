@@ -1,4 +1,4 @@
-# General To Do
+# General To-Do
 - [ ] Introduce pre-defined constants for the `op` strings
 
 # Parent Side Methods
@@ -6,7 +6,7 @@
 - [x] addWindow
 - [x] removeTarget
 - [x] addEventListener
-- [ ] removeEventListener
+- [x] removeEventListener
 - [x] hasTarget
 - [x] navigate
 - [x] send

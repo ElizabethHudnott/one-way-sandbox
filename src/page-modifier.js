@@ -55,10 +55,10 @@
 		windows.add(windowToInit);
 		if (!listeners.has(windowToInit)) {
 			listeners.set(windowToInit, {
-				error: [],
-				load: [],
-				navigation: [],
-				unload: [],
+				error: new Set(),
+				load: new Set(),
+				navigation: new Set(),
+				unload: new Set(),
 			});
 		}
 	}
@@ -140,9 +140,16 @@
 	Unsandbox.addEventListener = function (target, type, listener) {
 		const targetWindow = findWindow(target, false);
 		if (targetWindow !== undefined) {
-			listeners.get(targetWindow)[type].push(listener);
+			listeners.get(targetWindow)[type].add(listener);
 		} else {
 			throw new CustomError('UnknownWindow', target);
+		}
+	}
+
+	Unsandbox.removeEventListener = function (target, type, listener) {
+		const targetWindow = findWindow(target, false);
+		if (targetWindow !== undefined) {
+			listeners.get(targetWindow)[type].delete(listener);
 		}
 	}
 
