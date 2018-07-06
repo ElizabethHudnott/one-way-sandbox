@@ -124,7 +124,9 @@
 				sendError('BadArgs', 'args must be an array.', requestID);
 				return;
 			}
-			event.stopImmediatePropagation();
+			if (event.stopImmediatePropagation) {
+				event.stopImmediatePropagation();
+			}
 
 			const rootObject = paramLimitScript? Unsandbox.remoteAccess : window;
 
@@ -388,7 +390,17 @@ loop:		for (let i = 0; i < elements.length; i++) {
 			window.addEventListener("message", modifyPage);
 		}
 
-		window.addEventListener('load', Unsandbox.unsandbox);
+		window.addEventListener('load', function (event) {
+			/*	Signal to the container page to stop sending any more data if we navigate
+				to another origin or notify the container page of the new address otherwise.
+			*/
+			window.addEventListener('beforeunload', beforeUnload);
+
+			Unsandbox.unsandbox();
+
+			//Signal to the container page that we're loaded and ready to instructions.
+			parentWindow.postMessage({eventType: 'load'}, msgTarget);
+		});
 
 		Unsandbox.resandbox = function () {
 			window.removeEventListener('message', modifyPage);
@@ -396,13 +408,9 @@ loop:		for (let i = 0; i < elements.length; i++) {
 			window.removeEventListener('beforeunload', beforeUnload);
 		}
 
-		/*	Signal to the container page to stop sending any more data if we navigate to another
-			origin or notify the container page of the new address otherwise.
-		*/
-		window.addEventListener('beforeunload', beforeUnload);
-
-		//Signal to the container page that we're loaded and ready.
-		parentWindow.postMessage({eventType: 'load'}, msgTarget);
+		Unsandbox.do = function (command) {
+			modifyPage({data: command, source: parentWindow});
+		}
 
 	}
 }

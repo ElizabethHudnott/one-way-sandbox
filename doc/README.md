@@ -9,6 +9,11 @@
 - [x] navigate
 - [x] send
 
+# Child Side Methods
+- [x] unsandbox
+- [x] resandbox
+- [x] do (emulate being sent a command)
+
 # General Patterns
 - get*XXX*
 - get*XXX*s
