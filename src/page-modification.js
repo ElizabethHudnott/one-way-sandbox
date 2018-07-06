@@ -132,8 +132,15 @@
 
 			let func, applyFunc;
 			if (qualifiedFuncName !== undefined) {
-				const [funcParent, funcName] = findObject(qualifiedFuncName, rootObject);
-				func = funcParent[funcName];
+				let funcParent;
+				if (typeof(qualifiedFuncName) === 'function') {
+					func = qualifiedFuncName;
+					funcParent = undefined;
+				} else {
+					let funcName;
+					[funcParent, funcName] = findObject(qualifiedFuncName, rootObject);
+					func = funcParent[funcName];
+				}
 				applyFunc = function (argsToUse) {
 					return func.apply(funcParent, argsToUse);
 				}

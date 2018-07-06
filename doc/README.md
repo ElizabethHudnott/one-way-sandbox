@@ -1,3 +1,8 @@
+# General To Do
+- [ ] Remove the use of IDs to find windows
+- [ ] `operation` -> `op`
+- [ ] Introduce pre-defined constants for the `operation`/`op` strings
+
 # Parent Side Methods
 - [x] addElement
 - [x] removeElement
@@ -10,9 +15,10 @@
 - [x] send
 
 # Child Side Methods
-- [x] unsandbox
-- [x] resandbox
 - [x] do (emulate being sent a command)
+- [x] htmlToNodes
+- [x] resandbox
+- [x] unsandbox
 
 # General Patterns
 - get*XXX*
@@ -31,6 +37,7 @@
 ## HTML
 ### Elements
 - [x] innerHTML
+- [ ] innerText
 - [x] outerHTML
 - [x] append
 - [ ] filterUpdate
@@ -110,6 +117,7 @@ All operations return promises, which is used to obtain the result of a query.
 
 ## HTML
 - [x] innerHTML
+- [ ] innerText
 - [x] outerHTML
 - [x] getAttribute
 - [ ] getAttributes
