@@ -109,9 +109,6 @@
 			const qualifiedFuncName = modification.func;
 			const args = 'args' in modification? modification.args : [];
 			const perMatch = modification.perMatch;
-			if (perMatch) {
-				args.push(null);
-			}
 			const requestID = modification.requestID;
 			let elements;
 
@@ -139,7 +136,15 @@
 					return func.apply(funcParent, argsToUse);
 				}
 			}
-			const finalValue = func === undefined? value : applyFunc(args);
+			let finalValue;
+			if (perMatch) {
+				args.push(undefined, undefined);
+			} else if (func === undefined) {
+				finalValue = value;
+			} else {
+				finalValue = applyFunc(args);
+			}
+			const numArgs = args.length;
 
 			let charIndex, obj, jsPropertyName;
 
@@ -219,9 +224,12 @@
 
 			let returnValues = [], show;
 
-loop:		for (const element of elements) {
+loop:		for (let i = 0; i < elements.length; i++) {
+				const element = elements[i];
 				if (perMatch) {
-					args[args.length - 1] = element;
+					args[numArgs - 2] = element;
+					args[numArgs - 1] = i;
+					finalValue = applyFunc(args);
 				}
 				switch (operation) {
 				case 'addClass':
@@ -270,14 +278,14 @@ loop:		for (const element of elements) {
 					);
 					break;
 				case 'innerHTML':
-					if ('value' in modification) {
+					if ('value' in modification || func) {
 						element.innerHTML = String(finalValue);
 					} else {
 						returnValues.push(element.innerHTML);
 					}
 					break;
 				case 'outerHTML':
-					if ('value' in modification) {
+					if ('value' in modification || func) {
 						element.outerHTML = String(finalValue);
 					} else {
 						returnValues.push(element.outerHTML);

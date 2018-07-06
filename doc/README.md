@@ -10,13 +10,13 @@
 - [x] send
 
 # General Patterns
-- getXXX
-- getXXXs
-- incrementXXX
-- removeXXX
-- setXXX
-- toggleXXX
-- useXXX (Boolean argument, enables or disables the item)
+- get*XXX*
+- get*XXX*s
+- increment*XXX*
+- remove*XXX*
+- set*XXX*
+- toggle*XXX*
+- use*XXX* (Boolean argument, enables or disables the item)
 
 # Operations for Making Changes
 - [ ] Extend the ability to use functions to include nearly all of these operations.
@@ -29,6 +29,7 @@
 - [x] outerHTML
 - [x] append
 - [ ] filterUpdate
+- [x] increment
 - [ ] insertBefore
 - [ ] insertAfter
 - [ ] mapUpdate
@@ -76,7 +77,7 @@ Sets Element.style.xxx
 - [ ] features relating to other kinds of declarations
 
 ## JavaScript
-The `x = `... forms (except for `toggle`) can be applied to elements too. `x` is considered to be the `innerHTML` of the element in this case.
+Many of the `x = `... forms can be applied to elements too (see above). `x` is considered to be the `innerHTML` property of the element in this case.
 - [ ] addEventListenerThere
 - [ ] removeEventListenerThere
 - [ ] addEventListenerHere
@@ -136,7 +137,7 @@ These operate on a collection of matches.
 - [ ] reduceRight
 - [ ] some
 
-# Possible Targets
+# Possible Selectors
 - [x] Array of child indices
 - [x] CSS selector
 - [x] Mixed array of numeric indices and CSS selectors
@@ -144,11 +145,11 @@ These operate on a collection of matches.
 # Properties of a Request Object
 - [x] operation
 - [x] selector
-- [x] firstMatch (`true`, `false` or absent, for restricting changes or queries to the first matching element only)
-- [x] name (list of dot separated or square bracketed JS property names (without quotes))
+- [x] firstMatch (`true`, `false` or absent, used to restrict changes or queries to the first matching element only)
+- [x] name (a list of dot separated or square bracketed JS property names (without quotes))
 - [x] value or args
 - [x] func
-- [x] perMatch (`true` if func needs to be re-evaluated for each element, thus f(v, e) rather than f(v) )
+- [x] perMatch (`true` if func needs to be re-evaluated for each element, thus f(v, e, i) rather than f(v) )
 - [ ] mathJax (true/false if new content needs MathJax parsing)
 - [x] integrity (addScript and addStyleSheet only)
 - [ ] id (addStyleSheet only)
