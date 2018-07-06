@@ -101,7 +101,7 @@
 				return;
 			}
 
-			const operation = modification.operation;
+			const operation = modification.op;
 			const selector = modification.selector;
 			const firstMatch = modification.firstMatch;
 			const name = modification.name;

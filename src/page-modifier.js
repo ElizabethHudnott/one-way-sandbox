@@ -8,14 +8,28 @@
 	const urlParams = new URLSearchParams(myURL.indexOf('?') !== -1? myURL.slice(myURL.indexOf('?')) : '');
 	const paramAllowNavigation = /^(true|1)?$/i.test(urlParams.get('allownavigation'));
 
-	//The windows currently enabled for sending events to.
+	//The windows currently enabled for sending messages to and receiving results from.
 	const windows = new Set();
-	//The windows
+
+	/*	The subset of all registered windows (enabled or not) that are embedded somewhere
+		within the parent page (that is, are not pop up windows).
+	*/
 	const frameWindows = new Set();
+
+	//The subset of enabled windows which are currently loading new pages.
 	const navigating = new Set();
+
+	/*	The event handlers registered against each each window irrespective of whether the
+		window is currently enabled as is required in order to actually fire any events.
+	*/
 	const listeners = new Map();
+
+	/*	The promises that are not yet resolved, waiting to receive information sent back
+		from a child window.
+	*/
 	const promises = new Map();
 
+	//ID of the next request issued.
 	let requestID = 0;
 
 	function CustomError(name, data, message) {
@@ -26,13 +40,10 @@
 	CustomError.prototype = new Error();
 
 	function findWindow(target, mustBeEnabled) {
-		if (typeof(target) === 'string') {
-			const targetElement = document.getElementById(target);
-			if (targetElement !== null) {
-				const targetWindow = targetElement.contentWindow;
-				if (windows.has(targetWindow) || (!mustBeEnabled && listeners.has(targetWindow))) {
-					return targetWindow;
-				}
+		if (target instanceof Element) {
+			const targetWindow = target.contentWindow;
+			if (windows.has(targetWindow) || (!mustBeEnabled && listeners.has(targetWindow))) {
+				return targetWindow;
 			}
 		} else if (windows.has(target)) {
 			return target;
@@ -61,27 +72,14 @@
 		}
 	}
 
-	Unsandbox.addElement = function (id) {
-		const elementToAdd = document.getElementById(id);
-		if (elementToAdd !== null && elementToAdd.contentWindow) {
+	Unsandbox.addElement = function (elementToAdd) {
+		if (elementToAdd && elementToAdd.contentWindow) {
 			elementToAdd.addEventListener('load', onload);
 			const windowToAdd = elementToAdd.contentWindow;
 			frameWindows.add(windowToAdd)
 			init(windowToAdd);
 		} else {
 			throw new CustomError('UnknownWindow', id);
-		}
-	}
-
-	Unsandbox.removeElement = function (id) {
-		const element = document.getElementById(id);
-		const windowToRemove = element.contentWindow;
-		if (element !== null) {
-			element.removeEventListener('load', onload);
-			windows.delete(windowToRemove);
-			frameWindows.delete(windowToRemove);
-			navigating.delete(windowToRemove);
-			listeners.delete(windowToRemove);
 		}
 	}
 
@@ -93,10 +91,20 @@
 		return windowToAdd;
 	}
 
-	Unsandbox.removeWindow = function (windowToRemove) {
-		windows.delete(windowToRemove);
-		navigating.delete(windowToRemove);
-		listeners.delete(windowToRemove);
+	Unsandbox.removeTarget = function (itemToRemove) {
+		let windowToRemove;
+		if (itemToRemove instanceof Element) {
+			itemToRemove.removeEventListener('load', onload);
+			windowToRemove = itemToRemove.contentWindow;
+		} else {
+			windowToRemove = itemToRemove;
+		}
+		if (windowToRemove) {
+			windows.delete(windowToRemove);
+			frameWindows.delete(windowToRemove);
+			navigating.delete(windowToRemove);
+			listeners.delete(windowToRemove);
+		}
 	}
 
 	Unsandbox.navigate = function (target, urlString) {
@@ -150,14 +158,14 @@
 	}
 
 	Unsandbox.send = function (target, command) {
-		if (command.operation === undefined) {
+		const operation = command.op;
+		if (operation === undefined) {
 			throw new CustomError('BadArgs', 'operation', 'Operation not specified.');
 		}
 
 		const targetWindow = findWindow(target, true);
 
 		if (targetWindow !== undefined) {
-			const operation = command.operation;
 			requestID++;
 			command.requestID = requestID;
 			targetWindow.postMessage(command, '*');

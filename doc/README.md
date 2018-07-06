@@ -1,13 +1,10 @@
 # General To Do
-- [ ] Remove the use of IDs to find windows
-- [ ] `operation` -> `op`
-- [ ] Introduce pre-defined constants for the `operation`/`op` strings
+- [ ] Introduce pre-defined constants for the `op` strings
 
 # Parent Side Methods
 - [x] addElement
-- [x] removeElement
 - [x] addWindow
-- [x] removeWindow
+- [x] removeTarget
 - [x] addEventListener
 - [ ] removeEventListener
 - [x] hasTarget
@@ -156,7 +153,7 @@ These operate on a collection of matches.
 - [x] Mixed array of numeric indices and CSS selectors
 
 # Properties of a Request Object
-- [x] operation
+- [x] op
 - [x] selector
 - [x] firstMatch (`true`, `false` or absent, used to restrict changes or queries to the first matching element only)
 - [x] name (a list of dot separated or square bracketed JS property names (without quotes))

@@ -1,56 +1,57 @@
 'use strict';
 
-Unsandbox.addElement('inner');
+let inner = document.getElementById('inner');
+Unsandbox.addElement(inner);
 
-Unsandbox.addEventListener('inner', 'load', function () {
+Unsandbox.addEventListener(inner, 'load', function () {
 	console.log('Event: page loaded');
 });
-Unsandbox.addEventListener('inner', 'navigation', function (url) {
+Unsandbox.addEventListener(inner, 'navigation', function (url) {
 	console.log('Event: navigating to ' + url);
 });
-Unsandbox.addEventListener('inner', 'unload', function () {
+Unsandbox.addEventListener(inner, 'unload', function () {
 	console.log('Event: unloaded');
 });
 
-Unsandbox.navigate('inner', 'iframe.html');
+Unsandbox.navigate(inner, 'iframe.html');
 
 const booleanInput = document.getElementById('boolean');
 const outputBox = document.getElementById('return-value');
 
 function sendAddClass() {
-	Unsandbox.send('inner', {
-		operation: 'addClass',
+	Unsandbox.send(inner, {
+		op: 'addClass',
 		selector: 'body',
 		name: 'lemon',
 	});
 }
 
 function sendAddScript() {
-	Unsandbox.send('inner', {
-		operation: 'addScript',
+	Unsandbox.send(inner, {
+		op: 'addScript',
 		name: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_CHTML',
 	});
 }
 
 function sendAppend() {
-	Unsandbox.send('inner', {
-		operation: 'append',
+	Unsandbox.send(inner, {
+		op: 'append',
 		selector: 'body',
 		value: '<div><ins><em>This content has been <strong>added</strong> by the parent document.</em></ins></div>'
 	});
 }
 
 function sendCall() {
-	Unsandbox.send('inner', {
-		operation: 'call',
+	Unsandbox.send(inner, {
+		op: 'call',
 		name: 'f',
 		args: [ document.getElementById('arg').value ],
 	});
 }
 
 function sendGetAttribute() {
-	Unsandbox.send('inner', {
-		operation: 'getAttribute',
+	Unsandbox.send(inner, {
+		op: 'getAttribute',
 		selector: 'a',
 		name: 'href'
 	}).then (function (urls) {
@@ -59,8 +60,8 @@ function sendGetAttribute() {
 }
 
 function sendHasAttribute() {
-	Unsandbox.send('inner', {
-		operation: 'hasAttribute',
+	Unsandbox.send(inner, {
+		op: 'hasAttribute',
 		selector: 'input[type=checkbox]',
 		name: 'checked',
 	}).then (function (checked) {
@@ -69,8 +70,8 @@ function sendHasAttribute() {
 }
 
 function sendHasClass() {
-	Unsandbox.send('inner', {
-		operation: 'hasClass',
+	Unsandbox.send(inner, {
+		op: 'hasClass',
 		selector: 'body',
 		name: 'lemon',
 	}).then (function (result) {
@@ -79,37 +80,37 @@ function sendHasClass() {
 }
 
 function sendHide() {
-	Unsandbox.send('inner', {
-		operation: 'hide',
+	Unsandbox.send(inner, {
+		op: 'hide',
 		selector: '#links',
 	});
 }
 
 function sendIncrementHTML() {
-	Unsandbox.send('inner', {
-		operation: 'increment',
+	Unsandbox.send(inner, {
+		op: 'increment',
 		selector: '#scratch',
 	});
 }
 
 function sendIncrementJS() {
-	Unsandbox.send('inner', {
-		operation: 'increment',
+	Unsandbox.send(inner, {
+		op: 'increment',
 		name: 'x',
 	});
 }
 
 function sendIncrementAttribute() {
-	Unsandbox.send('inner', {
-		operation: 'incrementAttribute',
+	Unsandbox.send(inner, {
+		op: 'incrementAttribute',
 		selector: '#number',
 		name: 'value',
 	});
 }
 
 function sendIncrementStyle() {
-	Unsandbox.send('inner', {
-		operation: 'incrementStyle',
+	Unsandbox.send(inner, {
+		op: 'incrementStyle',
 		selector: 'div',
 		name: 'margin',
 		value: 2,
@@ -117,16 +118,16 @@ function sendIncrementStyle() {
 }
 
 function sendSetInnerHTML() {
-	Unsandbox.send('inner', {
-		operation: 'innerHTML',
+	Unsandbox.send(inner, {
+		op: 'innerHTML',
 		selector: '#scratch',
 		value: '<ins><em>This content has been <strong>edited</strong> by the parent document.</em></ins>'
 	});
 }
 
 function sendGetInnerHTML() {
-	Unsandbox.send('inner', {
-		operation: 'innerHTML',
+	Unsandbox.send(inner, {
+		op: 'innerHTML',
 		selector: 'ul',
 	}).then(function (html) {
 		outputBox.innerText = String(html);
@@ -134,16 +135,16 @@ function sendGetInnerHTML() {
 }
 
 function sendSetOuterHTML() {
-	Unsandbox.send('inner', {
-		operation: 'outerHTML',
+	Unsandbox.send(inner, {
+		op: 'outerHTML',
 		selector: 'h1',
 		value: '<ins><h2>This h2 Was Formerly a h1.</h2></ins>'
 	});
 }
 
 function sendGetOuterHTML() {
-	Unsandbox.send('inner', {
-		operation: 'outerHTML',
+	Unsandbox.send(inner, {
+		op: 'outerHTML',
 		selector: 'ul',
 	}).then(function (html) {
 		outputBox.innerText = String(html);
@@ -151,45 +152,45 @@ function sendGetOuterHTML() {
 }
 
 function sendReload() {
-	Unsandbox.send('inner', {
-		operation: 'reload',
+	Unsandbox.send(inner, {
+		op: 'reload',
 	});
 }
 
 function sendRemove() {
-	Unsandbox.send('inner', {
-		operation: 'remove',
+	Unsandbox.send(inner, {
+		op: 'remove',
 		selector: 'h1, h2',
 	});
 }
 
 function sendRemoveAttribute() {
-	Unsandbox.send('inner', {
-		operation: 'removeAttribute',
+	Unsandbox.send(inner, {
+		op: 'removeAttribute',
 		selector: 'input[type=checkbox]',
 		name: 'disabled'
 	});
 }
 
 function sendRemoveClass() {
-	Unsandbox.send('inner', {
-		operation: 'removeClass',
+	Unsandbox.send(inner, {
+		op: 'removeClass',
 		selector: 'body',
 		name: 'lemon',
 	});
 }
 
 function sendRemoveStyle() {
-	Unsandbox.send('inner', {
-		operation: 'removeStyle',
+	Unsandbox.send(inner, {
+		op: 'removeStyle',
 		selector: 'body',
 		name: 'background-color',
 	});
 }
 
 function sendReplaceClass() {
-	Unsandbox.send('inner', {
-		operation: 'replaceClass',
+	Unsandbox.send(inner, {
+		op: 'replaceClass',
 		selector: 'body',
 		name: 'lemon',
 		value: 'cursive',
@@ -197,16 +198,16 @@ function sendReplaceClass() {
 }
 
 function sendSet() {
-	Unsandbox.send('inner', {
-		operation: 'set',
+	Unsandbox.send(inner, {
+		op: 'set',
 		name: 'x',
 		value: 5
 	});
 }
 
 function sendSetFx() {
-	Unsandbox.send('inner', {
-		operation: 'set',
+	Unsandbox.send(inner, {
+		op: 'set',
 		name: 'x',
 		func: 'timesTwo',
 		args: [10]
@@ -214,8 +215,8 @@ function sendSetFx() {
 }
 
 function sendSetAttribute() {
-	Unsandbox.send('inner', {
-		operation: 'setAttribute',
+	Unsandbox.send(inner, {
+		op: 'setAttribute',
 		selector: '#textbox',
 		name: 'value',
 		value: 'Parent document wrote this'
@@ -223,8 +224,8 @@ function sendSetAttribute() {
 }
 
 function sendSetBooleanAttribute() {
-	Unsandbox.send('inner', {
-		operation: 'setAttribute',
+	Unsandbox.send(inner, {
+		op: 'setAttribute',
 		selector: 'input[type=checkbox]',
 		name: 'checked',
 		value: booleanInput.checked,
@@ -232,8 +233,8 @@ function sendSetBooleanAttribute() {
 }
 
 function sendSetStyle() {
-	Unsandbox.send('inner', {
-		operation: 'setStyle',
+	Unsandbox.send(inner, {
+		op: 'setStyle',
 		selector: 'body',
 		name: 'background-color',
 		value: 'lavender',
@@ -241,53 +242,53 @@ function sendSetStyle() {
 }
 
 function sendShow() {
-	Unsandbox.send('inner', {
-		operation: 'show',
+	Unsandbox.send(inner, {
+		op: 'show',
 		selector: '#links',
 	});
 }
 
 function sendShowBool() {
-	Unsandbox.send('inner', {
-		operation: 'show',
+	Unsandbox.send(inner, {
+		op: 'show',
 		selector: '#links',
 		value: booleanInput.checked,
 	});
 }
 
 function sendToggleHTML() {
-	Unsandbox.send('inner', {
-		operation: 'toggle',
+	Unsandbox.send(inner, {
+		op: 'toggle',
 		selector: '#links',
 	});
 }
 
 function sendToggleJS() {
-	Unsandbox.send('inner', {
-		operation: 'toggle',
+	Unsandbox.send(inner, {
+		op: 'toggle',
 		name: 'x',
 	});
 }
 
 function sendToggleAttribute() {
-	Unsandbox.send('inner', {
-		operation: 'toggleAttribute',
+	Unsandbox.send(inner, {
+		op: 'toggleAttribute',
 		selector: 'input[type=checkbox]',
 		name: 'checked',
 	});
 }
 
 function sendToggleClass() {
-	Unsandbox.send('inner', {
-		operation: 'toggleClass',
+	Unsandbox.send(inner, {
+		op: 'toggleClass',
 		selector: 'body',
 		name: 'lemon',
 	});
 }
 
 function sendUseClass() {
-	Unsandbox.send('inner', {
-		operation: 'useClass',
+	Unsandbox.send(inner, {
+		op: 'useClass',
 		selector: 'body',
 		name: 'lemon',
 		value: booleanInput.checked,
