@@ -1,5 +1,5 @@
 # General To-Do
-- [ ] Introduce pre-defined constants for the `op` strings
+- [ ] Handle return values that are Promises.
 
 # Parent Side Methods
 - [x] addElement
@@ -16,6 +16,7 @@
 - [x] htmlToNodes
 - [x] resandbox
 - [x] unsandbox
+- [x] window.unsandboxCondition (tested on page load).
 
 # General Patterns
 - get*XXX*

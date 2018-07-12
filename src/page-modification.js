@@ -212,7 +212,7 @@
 							} else if (subselector < numChildren) {
 								newElements.push(children[subselector]);
 							} else if (elements.length === 1) {
-								console.warn('Insufficient number of child nodes at depth ' + depth + ' in path ' + selector);
+								console.warn('Page modification: Insufficient number of child nodes at depth ' + depth + ' in path ' + selector);
 							}
 						} else {
 							if (firstMatch && depth === numberOfSubselectors - 1) {
@@ -406,26 +406,33 @@ loop:		for (let i = 0; i < elements.length; i++) {
 		}
 
 		Unsandbox.unsandbox = function () {
-			window.addEventListener("message", modifyPage);
-		}
-
-		window.addEventListener('load', function (event) {
 			/*	Signal to the container page to stop sending any more data if we navigate
-				to another origin or notify the container page of the new address otherwise.
+				to another origin (notify the container page of the new address otherwise).
 			*/
 			window.addEventListener('beforeunload', beforeUnload);
-
-			Unsandbox.unsandbox();
-
-			//Signal to the container page that we're loaded and ready to instructions.
+			//Start responding to messages.
+			window.addEventListener("message", modifyPage);
+			//Signal to the container page that we're loaded and ready.
 			parentWindow.postMessage({eventType: 'load'}, msgTarget);
-		});
+		}
 
 		Unsandbox.resandbox = function () {
 			window.removeEventListener('message', modifyPage);
 			parentWindow.postMessage({eventType: 'unload'}, msgTarget);
 			window.removeEventListener('beforeunload', beforeUnload);
 		}
+
+		window.addEventListener('load', function (event) {
+			if ('unsandboxCondition' in window) {
+				if (window.unsandboxCondition()) {
+					Unsandbox.unsandbox();
+				} else {
+					console.log('Page modification: unsandboxCondition not satisfied. Page remains sandboxed.');
+				}
+			} else {
+				Unsandbox.unsandbox();
+			}
+		});
 
 		Unsandbox.do = function (command) {
 			return modifyPage({data: command, source: window});
