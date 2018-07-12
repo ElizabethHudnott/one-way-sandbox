@@ -157,13 +157,13 @@ These operate on a collection of matches.
 - [x] op
 - [x] selector
 - [x] firstMatch (`true`, `false` or absent, used to restrict changes or queries to the first matching element only)
-- [x] name (a list of dot separated or square bracketed JS property names (without quotes))
+- [x] name (CSS property name, attribute name, list of dot separated or square bracketed JS property names (without quotes), etc.)
 	- [x] a single name, as a string
-	- [ ] multiple names, as an array
+	- [x] multiple names, as an array
 - [x] value or args
-	- [x] a single value
-	- [x] arguments to a function
-	- [ ] an object that maps names to values
+	- [x] a single value (value)
+	- [x] arguments to a function (args)
+	- [ ] an object that maps names to values (value)
 - [x] func
 - [x] perMatch (`true` if func needs to be re-evaluated for each element, thus f(v, e, i) rather than f(v) )
 - [ ] mathJax (true/false if new content needs MathJax parsing)

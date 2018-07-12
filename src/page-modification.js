@@ -105,7 +105,7 @@
 			const operation = modification.op;
 			const selector = modification.selector;
 			const firstMatch = modification.firstMatch;
-			const name = modification.name;
+			const nameSpecifier = modification.name;
 			const value = modification.value;
 			const qualifiedFuncName = modification.func;
 			const args = 'args' in modification? modification.args : [];
@@ -116,7 +116,7 @@
 			if (operation === undefined) {
 				return;
 			}
-			if (selector === undefined && name === undefined && !/^(reload|srcdoc)$/.test(operation)) {
+			if (selector === undefined && nameSpecifier === undefined && !/^(reload|srcdoc)$/.test(operation)) {
 				sendError('BadArgs', 'Missing selector or attribute name.', requestID);
 				return;
 			}
@@ -130,6 +130,15 @@
 			}
 
 			const rootObject = paramLimitScript? Unsandbox.remoteAccess : window;
+
+			let names, multipleNames;
+			if (Array.isArray(nameSpecifier)) {
+				names = nameSpecifier;
+				multipleNames = true;
+			} else {
+				names = [nameSpecifier];
+				multipleNames = false;
+			}
 
 			let func, applyFunc;
 			if (qualifiedFuncName !== undefined) {
@@ -160,13 +169,15 @@
 
 			switch (operation) {
 			case 'addScript':
-				let element = document.createElement('script');
-				element.setAttribute('src', name);
-				element.setAttribute('crossorigin', 'anonymous');
-				if (modification.integrity !== undefined) {
-					element.setAttribute('integrity', modification.integrity);
+				for (const name of names) {
+					let element = document.createElement('script');
+					element.setAttribute('src', name);
+					element.setAttribute('crossorigin', 'anonymous');
+					if (modification.integrity !== undefined) {
+						element.setAttribute('integrity', modification.integrity);
+					}
+					document.head.appendChild(element);
 				}
-				document.head.appendChild(element);
 				return;
 			case 'reload':
 				window.removeEventListener('beforeunload', beforeUnload);
@@ -232,7 +243,9 @@
 				}
 			}
 
-			let returnValues = [], show;
+			const returnValues = [];
+			let elementReturnValue = multipleNames? undefined : new Map();
+			let show;
 
 loop:		for (let i = 0; i < elements.length; i++) {
 				const element = elements[i];
@@ -241,160 +254,177 @@ loop:		for (let i = 0; i < elements.length; i++) {
 					args[numArgs - 1] = i;
 					finalValue = applyFunc(args);
 				}
-				switch (operation) {
-				case 'addClass':
-					element.classList.add(name);
-					break;
-				case 'append':
-					let newNodes = Unsandbox.htmlToNodes(finalValue);
-					while (newNodes.length > 0) {
-						element.appendChild(newNodes[0]);
-					}
-					break;
-				case 'call':
-					[obj, jsPropertyName] = findObject(name, element);
-					obj[jsPropertyName].apply(obj, args);
-					break;
-				case 'getAttribute':
-					returnValues.push(element.getAttribute(name));
-					break;
-				case 'hasClass':
-					returnValues.push(element.classList.contains(name));
-					break;
-				case 'hasAttribute':
-					returnValues.push(element.hasAttribute(name));
-					break;
-				case 'increment':
-					if (name === undefined) {
-						element.innerHTML = increment(element.innerHTML, finalValue);
-					} else {
-						const amount = (value === undefined && func === undefined)? 1 : parseFloat(finalValue);
-						[obj, jsPropertyName] = findObject(name, element);
-						obj[jsPropertyName] = obj[jsPropertyName] + amount;
-					}
-					break;
-				case 'incrementAttribute':
-					element.setAttribute(name, increment(element.getAttribute(name), finalValue));
-					break;
-				case 'incrementStyle':
-					let currentValue = element.style.getPropertyValue(name);
-					if (!currentValue) {
-						currentValue = getComputedStyle(element).getPropertyValue(name);
-					}
-					element.style.setProperty(
-						name,
-						increment(currentValue, finalValue),
-						element.style.getPropertyPriority(name)
-					);
-					break;
-				case 'innerHTML':
-					if ('value' in modification || func) {
-						element.innerHTML = String(finalValue);
-					} else {
-						returnValues.push(element.innerHTML);
-					}
-					break;
-				case 'innerText':
-					if ('value' in modification || func) {
-						element.innerText = String(finalValue);
-					} else {
-						returnValues.push(element.innerText);
-					}
-					break;
-				case 'outerHTML':
-					if ('value' in modification || func) {
-						element.outerHTML = String(finalValue);
-					} else {
-						returnValues.push(element.outerHTML);
-					}
-					break;
-				case 'remove':
-					element.parentNode.removeChild(element);
-					break;
-				case 'removeAttribute':
-					element.removeAttribute(name);
-					break;
-				case 'removeClass':
-					element.classList.remove(name);
-					break;
-				case 'removeStyle':
-					element.style.removeProperty(name);
-					break;
-				case 'replaceClass':
-					element.classList.replace(name, finalValue);
-					break;
-				case 'set':
-					[obj, jsPropertyName] = findObject(name, element);
-					obj[jsPropertyName] = finalValue;
-					break;
-				case 'setAttribute':
-					if (value === true) {
-						element.setAttribute(name, name);
-					} else if (value === false) {
-						element.removeAttribute(name);
-					} else {
-						element.setAttribute(name, finalValue);
-					}
-					break;
-				case 'setStyle':
-					let match = String(finalValue).match(/^(.*?)(?:!\s*(important)\s*)?$/);
-					element.style.setProperty(name, match[1], match[2]);
-					break;
-				case 'hide':
-					show = false;
-					// fall through
-				case 'show':
-					if (show === undefined) {
-						show = !('value' in modification) || finalValue;
-					}
-					// fall through
-				case 'toggle':
-					if (name === undefined) {
-						const computedStyle = getComputedStyle(element);
-						if (show === undefined) {
-							show = computedStyle.getPropertyValue('display') === 'none';
+				if (multipleNames) {
+					elementReturnValue = new Map();
+				} else {
+					elementReturnValue.clear();
+				}
+
+				for (const name of names) {
+					switch (operation) {
+					case 'addClass':
+						element.classList.add(name);
+						break;
+					case 'append':
+						let newNodes = Unsandbox.htmlToNodes(finalValue);
+						while (newNodes.length > 0) {
+							element.appendChild(newNodes[0]);
 						}
-						const displayStyle = element.style.display;
-						if (show) {
-							//Show element
-							if (displayStyle === '' || displayStyle === 'none') {
-								element.style.display = element.getAttribute('data-x-unsandbox-display');
+						break;
+					case 'call':
+						[obj, jsPropertyName] = findObject(name, element);
+						obj[jsPropertyName].apply(obj, args);
+						break;
+					case 'getAttribute':
+						elementReturnValue.set(name, element.getAttribute(name));
+						break;
+					case 'hasClass':
+						elementReturnValue.set(name, element.classList.contains(name));
+						break;
+					case 'hasAttribute':
+						elementReturnValue.set(name, element.hasAttribute(name));
+						break;
+					case 'increment':
+						if (name === undefined) {
+							element.innerHTML = increment(element.innerHTML, finalValue);
+						} else {
+							const amount = (value === undefined && func === undefined)? 1 : parseFloat(finalValue);
+							[obj, jsPropertyName] = findObject(name, element);
+							obj[jsPropertyName] = obj[jsPropertyName] + amount;
+						}
+						break;
+					case 'incrementAttribute':
+						element.setAttribute(name, increment(element.getAttribute(name), finalValue));
+						break;
+					case 'incrementStyle':
+						let currentValue = element.style.getPropertyValue(name);
+						if (!currentValue) {
+							currentValue = getComputedStyle(element).getPropertyValue(name);
+						}
+						element.style.setProperty(
+							name,
+							increment(currentValue, finalValue),
+							element.style.getPropertyPriority(name)
+						);
+						break;
+					case 'innerHTML':
+						if ('value' in modification || func) {
+							element.innerHTML = String(finalValue);
+						} else {
+							elementReturnValue.set(name, element.innerHTML);
+						}
+						break;
+					case 'innerText':
+						if ('value' in modification || func) {
+							element.innerText = String(finalValue);
+						} else {
+							elementReturnValue.set(name, element.innerText);
+						}
+						break;
+					case 'outerHTML':
+						if ('value' in modification || func) {
+							element.outerHTML = String(finalValue);
+						} else {
+							elementReturnValue.set(name, element.outerHTML);
+						}
+						break;
+					case 'remove':
+						element.parentNode.removeChild(element);
+						break;
+					case 'removeAttribute':
+						element.removeAttribute(name);
+						break;
+					case 'removeClass':
+						element.classList.remove(name);
+						break;
+					case 'removeStyle':
+						element.style.removeProperty(name);
+						break;
+					case 'replaceClass':
+						element.classList.replace(name, finalValue);
+						break;
+					case 'set':
+						[obj, jsPropertyName] = findObject(name, element);
+						obj[jsPropertyName] = finalValue;
+						break;
+					case 'setAttribute':
+						if (value === true) {
+							element.setAttribute(name, name);
+						} else if (value === false) {
+							element.removeAttribute(name);
+						} else {
+							element.setAttribute(name, finalValue);
+						}
+						break;
+					case 'setStyle':
+						let match = String(finalValue).match(/^(.*?)(?:!\s*(important)\s*)?$/);
+						element.style.setProperty(name, match[1], match[2]);
+						break;
+					case 'hide':
+						show = false;
+						// fall through
+					case 'show':
+						if (show === undefined) {
+							show = !('value' in modification) || finalValue;
+						}
+						// fall through
+					case 'toggle':
+						if (name === undefined) {
+							const computedStyle = getComputedStyle(element);
+							if (show === undefined) {
+								show = computedStyle.getPropertyValue('display') === 'none';
 							}
-							element.removeAttribute('data-x-unsandbox-display')
-							if (computedStyle.getPropertyValue('display') === 'none') {
-								element.style.display = 'initial';
+							const displayStyle = element.style.display;
+							if (show) {
+								//Show element
+								if (displayStyle === '' || displayStyle === 'none') {
+									element.style.display = element.getAttribute('data-x-unsandbox-display');
+								}
+								element.removeAttribute('data-x-unsandbox-display')
+								if (computedStyle.getPropertyValue('display') === 'none') {
+									element.style.display = 'initial';
+								}
+							} else {
+								//Hide element
+								if (displayStyle !== '' && displayStyle !== 'none') {
+									element.setAttribute('data-x-unsandbox-display', displayStyle);
+								}
+								element.style.display = 'none';
 							}
 						} else {
-							//Hide element
-							if (displayStyle !== '' && displayStyle !== 'none') {
-								element.setAttribute('data-x-unsandbox-display', displayStyle);
-							}
-							element.style.display = 'none';
+							// Toggle JS boolean variable
+							[obj, jsPropertyName] = findObject(name, element);
+							obj[jsPropertyName] = !obj[jsPropertyName];
 						}
-					} else {
-						// Toggle JS boolean variable
-						[obj, jsPropertyName] = findObject(name, element);
-						obj[jsPropertyName] = !obj[jsPropertyName];
+						break;
+					case 'toggleAttribute':
+						if (element.hasAttribute(name)) {
+							element.removeAttribute(name);
+						} else {
+							element.setAttribute(name, name);
+						}
+						break;
+					case 'toggleClass':
+						element.classList.toggle(name);
+						break;
+					case 'useClass':
+						element.classList.toggle(name, finalValue);
+						break;
+					default:
+						sendError('BadArgs', 'Unknown operation ' + operation);
+						break loop;
 					}
-					break;
-				case 'toggleAttribute':
-					if (element.hasAttribute(name)) {
-						element.removeAttribute(name);
+
+				} //end for each name
+
+				if (elementReturnValue.size > 0) {
+					if (multipleNames) {
+						returnValues.push(elementReturnValue);
 					} else {
-						element.setAttribute(name, name);
+						returnValues.push(elementReturnValue.get(nameSpecifier));
 					}
-					break;
-				case 'toggleClass':
-					element.classList.toggle(name);
-					break;
-				case 'useClass':
-					element.classList.toggle(name, finalValue);
-					break;
-				default:
-					sendError('BadArgs', 'Unknown operation ' + operation);
-					break loop;
 				}
-			}
+			} //end for each element
 
 			if (returnValues.length > 0 || elements.length === 0) {
 				if (source === window) {
