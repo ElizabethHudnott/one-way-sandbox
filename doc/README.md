@@ -163,7 +163,7 @@ These operate on a collection of matches.
 - [x] value or args
 	- [x] a single value (value)
 	- [x] arguments to a function (args)
-	- [ ] an object that maps names to values (value)
+	- [x] an object that maps names to values (value)
 - [x] func
 - [x] perMatch (`true` if func needs to be re-evaluated for each element, thus f(v, e, i) rather than f(v) )
 - [ ] mathJax (true/false if new content needs MathJax parsing)

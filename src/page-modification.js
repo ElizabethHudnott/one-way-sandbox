@@ -106,17 +106,32 @@
 			const selector = modification.selector;
 			const firstMatch = modification.firstMatch;
 			const nameSpecifier = modification.name;
-			const value = modification.value;
+			const valueField = modification.value;
 			const qualifiedFuncName = modification.func;
 			const args = 'args' in modification? modification.args : [];
 			const perMatch = modification.perMatch;
 			const requestID = modification.requestID;
 			let elements;
 
+			let names, multipleNames, value, nameValuePairs;
+			if (Array.isArray(nameSpecifier)) {
+				names = nameSpecifier;
+				multipleNames = true;
+				nameValuePairs = false;
+			} else if (typeof(valueField) === 'object') {
+				names = Object.keys(valueField);
+				multipleNames = true;
+				nameValuePairs = true;
+			} else {
+				names = [nameSpecifier];
+				multipleNames = false;
+				nameValuePairs = false;
+			}
+
 			if (operation === undefined) {
 				return;
 			}
-			if (selector === undefined && nameSpecifier === undefined && !/^(reload|srcdoc)$/.test(operation)) {
+			if (selector === undefined && nameSpecifier === undefined && !nameValuePairs && !/^(reload|srcdoc)$/.test(operation)) {
 				sendError('BadArgs', 'Missing selector or attribute name.', requestID);
 				return;
 			}
@@ -130,15 +145,6 @@
 			}
 
 			const rootObject = paramLimitScript? Unsandbox.remoteAccess : window;
-
-			let names, multipleNames;
-			if (Array.isArray(nameSpecifier)) {
-				names = nameSpecifier;
-				multipleNames = true;
-			} else {
-				names = [nameSpecifier];
-				multipleNames = false;
-			}
 
 			let func, applyFunc;
 			if (qualifiedFuncName !== undefined) {
@@ -159,7 +165,7 @@
 			if (perMatch) {
 				args.push(undefined, undefined);
 			} else if (func === undefined) {
-				finalValue = value;
+				finalValue = valueField;
 			} else {
 				finalValue = applyFunc(args);
 			}
@@ -261,6 +267,10 @@ loop:		for (let i = 0; i < elements.length; i++) {
 				}
 
 				for (const name of names) {
+					if (nameValuePairs) {
+						finalValue = valueField[name];
+					}
+
 					switch (operation) {
 					case 'addClass':
 						element.classList.add(name);
