@@ -294,6 +294,13 @@ loop:		for (let i = 0; i < elements.length; i++) {
 						returnValues.push(element.innerHTML);
 					}
 					break;
+				case 'innerText':
+					if ('value' in modification || func) {
+						element.innerText = String(finalValue);
+					} else {
+						returnValues.push(element.innerText);
+					}
+					break;
 				case 'outerHTML':
 					if ('value' in modification || func) {
 						element.outerHTML = String(finalValue);

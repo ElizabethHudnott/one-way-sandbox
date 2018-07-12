@@ -19,6 +19,7 @@
 		<li><button type="button" onclick="sendIncrementAttribute()">incrementAttribute</button></li>
 		<li><button type="button" onclick="sendIncrementStyle()">incrementStyle</button></li>
 		<li><button type="button" onclick="sendSetInnerHTML()">innerHTML (setter)</button></li>
+		<li><button type="button" onclick="sendSetInnerText()">innerText (setter)</button></li>
 		<li><button type="button" onclick="sendSetOuterHTML()">outerHTML (setter)</button></li>
 		<li><button type="button" onclick="sendReload()">reload</button></li>
 		<li><button type="button" onclick="sendRemove()">remove</button></li>
@@ -42,7 +43,9 @@
 		<li><button type="button" onclick="sendHasAttribute()">hasAttribute</button></li>
 		<li><button type="button" onclick="sendHasClass()">hasClass</button></li>
 		<li><button type="button" onclick="sendGetInnerHTML()">innerHTML (getter)</button></li>
+		<li><button type="button" onclick="sendGetInnerText()">innerText (getter)</button></li>
 		<li><button type="button" onclick="sendGetOuterHTML()">outerHTML (getter)</button></li>
+		<li><a href="https://github.com/ElizabethHudnott/one-way-sandbox/tree/master/doc" target="_blank">Feature List</a></li>
 	</ul>
 	<div>
 		<label>
@@ -53,6 +56,8 @@
 			Argument:
 			<input id="arg" value="42"/>
 		</label>
+	</div>
+	<div>
 		<label>
 			Return Value:
 			<output id="return-value"></output>

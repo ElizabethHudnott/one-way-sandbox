@@ -177,7 +177,7 @@
 			command.requestID = requestID;
 			targetWindow.postMessage(command, '*');
 			if (/^(get|has)/.test(operation) ||
-				(!('value' in command) && /^(innerHTML|outerHTML)$/.test(operation))
+				(!('value' in command) && /^(innerHTML|innerText|outerHTML)$/.test(operation))
 			) {
 				const promise = pendingPromise();
 				promises.set(requestID, promise);

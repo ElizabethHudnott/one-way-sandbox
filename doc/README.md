@@ -19,7 +19,7 @@
 
 # General Patterns
 - get*XXX*
-- get*XXX*s
+- get*XXX*s (retrieves all available names)
 - increment*XXX*
 - remove*XXX*
 - set*XXX*
@@ -34,7 +34,7 @@
 ## HTML
 ### Elements
 - [x] innerHTML
-- [ ] innerText
+- [x] innerText
 - [x] outerHTML
 - [x] append
 - [ ] filterUpdate
@@ -114,7 +114,7 @@ All operations return promises, which is used to obtain the result of a query.
 
 ## HTML
 - [x] innerHTML
-- [ ] innerText
+- [x] innerText
 - [x] outerHTML
 - [x] getAttribute
 - [ ] getAttributes
@@ -157,7 +157,12 @@ These operate on a collection of matches.
 - [x] selector
 - [x] firstMatch (`true`, `false` or absent, used to restrict changes or queries to the first matching element only)
 - [x] name (a list of dot separated or square bracketed JS property names (without quotes))
+	- [x] a single name, as a string
+	- [ ] multiple names, as an array
 - [x] value or args
+	- [x] a single value
+	- [x] arguments to a function
+	- [ ] an object that maps names to values
 - [x] func
 - [x] perMatch (`true` if func needs to be re-evaluated for each element, thus f(v, e, i) rather than f(v) )
 - [ ] mathJax (true/false if new content needs MathJax parsing)

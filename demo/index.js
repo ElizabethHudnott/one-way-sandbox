@@ -125,12 +125,29 @@ function sendSetInnerHTML() {
 	});
 }
 
+function sendSetInnerText() {
+	Unsandbox.send(inner, {
+		op: 'innerText',
+		selector: '#scratch',
+		value: '<ins><em>This content has been <strong>edited</strong> by the parent document.</em></ins>'
+	});
+}
+
 function sendGetInnerHTML() {
 	Unsandbox.send(inner, {
 		op: 'innerHTML',
 		selector: 'ul',
 	}).then(function (html) {
 		outputBox.innerText = String(html);
+	});
+}
+
+function sendGetInnerText() {
+	Unsandbox.send(inner, {
+		op: 'innerText',
+		selector: 'ul',
+	}).then(function (text) {
+		outputBox.innerText = String(text);
 	});
 }
 
