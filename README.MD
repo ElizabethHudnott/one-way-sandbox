@@ -11,19 +11,19 @@ Have you ever wanted to isolate some web content so its scripts and CSS didn't m
 Add the script: `<script src="page-modification.js"></script>`
 
 ## Sending Commands from Parent to Child
-`
+````javascript
 	Unsandbox.send(frame, {
 		op: 'setStyle',
 		selector: 'body',
 		name: 'background-color',
 		value: 'lavender',
 	});
-`
+````
 
 ## Getting a Return Value Back
 Return values are catered for using promises.
 
-`
+````javascript
 Unsandbox.send(frame, {
 		op: 'getAttribute',
 		selector: 'a',
@@ -31,6 +31,6 @@ Unsandbox.send(frame, {
 	}).then (function (urls) {
 		// urls in an array of URL strings.
 	});
-`
+````
 
 A [complete list of commands](https://github.com/ElizabethHudnott/one-way-sandbox/tree/master/doc) and their current implementation status is available.
