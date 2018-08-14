@@ -33,4 +33,4 @@ Unsandbox.send(frame, {
 });
 ````
 
-A [complete list of commands](https://github.com/ElizabethHudnott/one-way-sandbox/tree/master/doc) and their current implementation status is available.
+A [complete list of commands](https://github.com/ElizabethHudnott/one-way-sandbox/tree/master/doc) and their current implementation status is available. There's also a [demo page](https://elizabethhudnott.github.io/one-way-sandbox/demo/index.html) and accompanying [source code](https://github.com/ElizabethHudnott/one-way-sandbox/tree/master/demo).
