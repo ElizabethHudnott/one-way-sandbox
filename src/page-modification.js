@@ -118,7 +118,7 @@
 				names = nameSpecifier;
 				multipleNames = true;
 				nameValuePairs = false;
-			} else if (typeof(valueField) === 'object') {
+			} else if (nameSpecifier === undefined && typeof(valueField) === 'object') {
 				names = Object.keys(valueField);
 				multipleNames = true;
 				nameValuePairs = true;
@@ -352,6 +352,9 @@ loop:		for (let i = 0; i < elements.length; i++) {
 						break;
 					case 'replaceClass':
 						element.classList.replace(name, finalValue);
+						break;
+					case 'scrollIntoView':
+						element.scrollIntoView();
 						break;
 					case 'set':
 						[obj, jsPropertyName] = findObject(name, element);

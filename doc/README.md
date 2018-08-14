@@ -45,7 +45,7 @@
 - [ ] mapUpdate
 - [ ] prepend
 - [x] remove
-- [ ] scrollIntoView
+- [x] scrollIntoView
 - [x] hide
 - [x] show (with optional `true` or `false` argument)
 - [x] toggle

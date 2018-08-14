@@ -214,6 +214,13 @@ function sendReplaceClass() {
 	});
 }
 
+function sendScrollIntoView() {
+	Unsandbox.send(inner, {
+		op: 'scrollIntoView',
+		selector: '#outofview',
+	});
+}
+
 function sendSet() {
 	Unsandbox.send(inner, {
 		op: 'set',
