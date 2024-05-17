@@ -87,7 +87,7 @@ Sets Element.style.xxx
 - [ ] features relating to other kinds of declarations
 
 ## JavaScript
-Many of the `x = `... forms can be applied to elements too (see above). `x` is considered to be the `innerHTML` property of the element in this case.
+Many of the `x = `... forms can be applied to elements too (see above).
 - [ ] addEventListenerThere
 - [ ] removeEventListenerThere
 - [ ] addEventListenerHere
